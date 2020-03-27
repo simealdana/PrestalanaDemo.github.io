@@ -1,0 +1,86 @@
+﻿.login{
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    height:100vh;
+    flex-direction:column;
+}
+.cuadro-login {
+    width: 490px;
+    padding: 40px 80px;
+    box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5);
+
+    .login-logo {
+        width: 254px;
+        margin-bottom: 35px;
+    }
+
+    .title-login {
+        font-family: @ovo;
+        font-size: 24px;
+        margin-bottom: 40px;
+        text-align: center;
+        color: @gray-text;
+    }
+
+
+    .item-form--btn {
+        img{
+            height:40px;
+        }
+    }
+}
+
+.olvido-contrasena{
+    text-align:center;
+    font-size:14px;
+    font-weight:300;
+    font-style:italic;
+    color:@gray-regular;
+    width:100%;
+    &:hover{
+        text-decoration:none;
+        color:@gray-text;
+    }
+}
+
+.login-text--footer {
+    width: 490px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+
+    a {
+        color: @gray-regular;
+        text-decoration:none;
+    }
+}
+
+.mobile {
+    .cuadro-login, .login-text--footer {
+        width: 100%;
+    }
+
+    .cuadro-login {
+        padding: 30px;
+        box-shadow: none;
+
+        .login-logo {
+            width: 200px;
+        }
+
+        .title-login {
+            margin-bottom: 20px;
+        }
+    }
+
+
+    .item-form--btn {
+        margin-top: 25px;
+        justify-content: space-around;
+    }
+
+    .login-text--footer{
+        margin-top:20px;
+    }
+}

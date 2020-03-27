@@ -1,0 +1,567 @@
+﻿.verificacion-datos{
+    .group{
+        padding-right:30px;
+    }
+}
+
+.recolectar-oro {
+    padding: 30px;
+
+
+    #almoneda, #auditadas {
+        display: none;
+    }
+
+    .box-data .box-sku {
+        .circle-red {
+            display: none;
+        }
+
+        &.incidencia {
+            .circle-red {
+                display: flex
+            }
+        }
+    }
+}
+
+
+.title-box {
+    font-family: @ovo;
+    font-size: 22px;
+    background: white;
+    padding: 0 50px 0 15px;
+    position: relative;
+    top: 15px;
+}
+.fullscreen {
+    position: relative;
+
+    .item-rotate {
+        transform: rotate(90deg);
+        position: absolute;
+        top: 65px;
+        right: -20px;
+        border-top: 1px solid @gray-text;
+        cursor:pointer;
+        .title-box {
+            position: relative;
+            top: 0;
+            padding: 0;
+        }
+    }
+}
+
+.modal-auditoria {
+    .modal-body {
+        padding-bottom: 40px;
+    }
+
+    #carousel-hide{
+        display:none;
+        margin-bottom:10px;
+    }
+    #carousel-view{
+        margin-bottom:10px;
+    }
+    
+    .carousel {
+        .carousel-item img {
+            width: 200px !important;
+        }
+
+        a {
+            i {
+                color: @gray-text;
+            }
+        }
+    }
+
+    .line {
+        border-right: 1px solid @gray-light;
+        height: 100%;
+        width: 1px;
+        align-items: center;
+        margin: 0 auto;
+    }
+
+    .label-value {
+        a {
+            font-style: italic;
+            font-size: 13px;
+            font-weight: 300;
+            color: @gray-regular;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    }
+
+
+    .carousel-inner {
+    }
+
+
+    .item-modal--body {
+        display: flex;
+
+        .table-responsive {
+            padding-right: 15px;
+            width: 68%;
+        }
+
+        .form-group {
+            width: 38%;
+
+            label {
+                margin-bottom: 10px;
+            }
+
+
+            textarea {
+                border: 1px solid @gray-light;
+                resize: none;
+                margin-bottom: 20px;
+            }
+
+            .btn-modal--oro {
+                height: 75px;
+                display: flex;
+                justify-content: flex-end;
+                align-items: flex-end;
+            }
+        }
+    }
+}
+
+.modal-incidencia {
+
+    .select {
+        margin-right: 10px;
+        width: 60%
+    }
+
+    .md-checkbox{
+        label{
+            font-size:14px;
+        }
+
+    }
+    .item-modal {
+        span, label {
+            font-size: 14px;
+        }
+
+        &:first-child{
+            margin-right:30px;
+        }
+    }
+
+
+    .content-inspeccion {
+        display: flex;
+        padding-top: 40px;
+
+        .item-modal--inspeccion {
+
+
+            .add-user {
+                display: flex;
+                color: @gray-text;
+                align-items: center;
+                text-decoration: none;
+
+                .icon-add {
+                    padding-left: 5px;
+                }
+            }
+
+            .info {
+                font-size: 12px;
+            }
+
+            .table {
+                margin-top: 5px;
+            }
+
+            .table-incidencia {
+                margin-top: 66px;
+            }
+        }
+    }
+
+
+    .item-modal--inspeccion:first-child {
+        width: 60%;
+        padding-right: 17px;
+        border-right: 1px solid @gray-light;
+    }
+
+    .item-modal--inspeccion:last-child {
+        width: 40%;
+        padding-left: 17px;
+    }
+}
+
+.captura-papeleta {
+    form {
+        max-width: 75%;
+        display: flex;
+        padding: 30px 0 10px;
+
+        .group {
+            margin: 0 30px 0 0;
+        }
+    }
+
+    .zoom-imagen {
+        img {
+            max-width: 630px;
+        }
+    }
+}
+
+.contenedor-imagenes {
+    display: flex;
+
+    .contenedor-selector {
+        display: flex;
+        flex-direction: column;
+
+        img {
+            width: 207px;
+            height: 80px;
+            margin: 5px 10px 10px 0;
+
+            &.activada {
+                border: 2px solid @green;
+            }
+        }
+
+        .numero {
+            position: absolute;
+            top: 10px;
+            left: 5px;
+            height: 15px;
+            width: 15px;
+            font-size: 10px;
+            background: white;
+            border-radius: 50px;
+            border: 1px solid @gray-text;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+    }
+
+    .zoom-imagen {
+        margin: 5px 10px;
+        position: relative;
+
+        img {
+            height: 270px;
+            border: 2px solid @green;
+        }
+
+        .foto-zoom {
+            display: inline-flex;
+            position: absolute;
+            background: white;
+            height: 34px;
+            width: 34px;
+            bottom: -10px;
+            left: 12px;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+    }
+}
+
+.btn-captura {
+    display: flex;
+    align-items:center;
+
+    .btns {
+        height: 30px;
+        margin-left: 0;
+    }
+
+    .popover-info {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+}
+
+#zoom-foto {
+    img {
+        max-height: 500px;
+    }
+
+    .modal-dialog {
+        margin: 4.75rem auto;
+    }
+
+    .modal-content {
+        background: transparent;
+        border: none;
+
+        .close {
+            width: 30px;
+            position: absolute;
+            right: 0;
+            top: -40px;
+            font-size: 35px;
+            color: white;
+        }
+    }
+}
+
+.popover-body {
+    font-size: 12px;
+    color: @gray-text;
+}
+
+.validacion-peso {
+    .btn-paquete{
+        .btns{
+            height:30px;
+            font-size:12px;
+        }
+    }
+}
+
+.acta-hechos {
+    .texto-titulo {
+        h3 {
+            font-size: 22px;
+            color: @gray-bold;
+            margin-bottom: 15px;
+            font-family: @ovo;
+        }
+
+        p {
+            font-size: 14px
+        }
+    }
+
+    .data-item {
+        .edit-modal{
+            font-size: 20px;
+            display: inline-flex;
+            color: @gray-text;
+            cursor:pointer;
+        }
+    }
+    .container-finger{
+
+    }
+
+}
+
+
+
+
+.box-table {
+    padding: 20px;
+    box-shadow: 0px 0px 2px 0px rgb(170, 178, 189);
+
+    .box-titulo {
+        text-align: center;
+        padding-bottom: 20px;
+        font-weight: 300;
+        color: @gray-regular;
+    }
+
+    td {
+        padding: 5px;
+    }
+}
+
+#modal-edit--acta-hechos, #modal-edit--seguribolsa, #modal-ticket, #modal-estimado-venta {
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+
+        form {
+            display: flex;
+        }
+
+        .zoom-imagen img {
+            width: 465px;
+        }
+    }
+}
+
+
+//// Componentes transversales
+.box-data {
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+
+    .icon-fullscreen, .icon-fullscreen-exit {
+        float: right;
+        padding: 10px;
+        color: @gray-regular;
+        cursor: pointer;
+    }
+
+    .total-value {
+        padding: 30px 15px 0px;
+
+        span {
+            margin-right: 20px;
+        }
+    }
+
+    .search {
+        padding: 0 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .group {
+            margin: 15px 0;
+        }
+
+        .input-field {
+            padding: 0;
+
+            .icon-search {
+                right: 0;
+                color: @gray-regular;
+            }
+        }
+
+        .filtro-incidencia {
+            display: inline-flex;
+            justify-content: center;
+            color: @gray-regular;
+            padding-left: 25px;
+            margin-bottom: 45px;
+        }
+
+        .filtro-incidencia.filter {
+            color: @red;
+        }
+    }
+
+    .box-sku {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 15px;
+        border-bottom: 1px solid @gray-light;
+
+        img {
+            height: 34px;
+            width: 34px;
+        }
+
+
+
+        .dp-flex {
+            i {
+                padding-left: 10px;
+            }
+        }
+
+
+
+        .icon-more-horiz {
+            text-align: right;
+            cursor: pointer;
+        }
+    }
+
+    &.auditadas {
+        .total-value {
+            .result {
+                color: @red;
+            }
+        }
+
+        .box-sku {
+            background-color: @gray-background;
+        }
+    }
+
+    .table-collapse {
+        padding: 15px;
+        border-bottom: 1px solid @gray-light;
+
+        div.item-table {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+    }
+}
+
+
+.entrega {
+    form {
+        .group, .select {
+            margin: 30px 0;
+        }
+    }
+
+    .message-info{
+        margin-left:20px;
+        font-size:12px;
+    }
+}
+
+#modal-edit--seguribolsa {
+    form {
+        .group, .select {
+            margin: 30px 0;
+        }
+    }
+}
+
+.asignacion-auditoria {
+    .form {
+        margin-top: 20px;
+    }
+}
+
+.consulta-auditoria {
+    .box-sku {
+        i {
+            cursor: pointer;
+        }
+    }
+}
+
+.cobertura {
+    #close-coberturas {
+        display: none;
+    }
+
+    .fullscreen .item-rotate {
+        top: 115px;
+        right: -70px;
+    }
+}
+
+
+.tabs-box {
+    .nav-tabs {
+        .nav-link {
+            padding: 8px 20px;
+            color:@gray-regular;
+            &.active{
+                color:@gray-text;
+            }
+        }
+    }
+
+    .tab-content {
+        padding: 20px;
+        border:1px solid @gray-light;
+        border-top-width:0;
+    }
+}

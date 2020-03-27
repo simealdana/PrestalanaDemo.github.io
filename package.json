@@ -1,0 +1,51 @@
+{
+  "name": "golden-start-web-react-js",
+  "version": "0.0.0",
+  "description": "GoldenStartReactJS",
+  "main": "server.js",
+  "author": {
+    "name": ""
+  },
+  "scripts": {
+    "build": "webpack-cli app.tsx --config webpack-config.js"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.9.4",
+    "axios": "^0.19.0",
+    "bootstrap": "^4.4.1",
+    "css-loader": "^3.2.0",
+    "express": "^4.17.1",
+    "file-loader": "^4.2.0",
+    "jquery": "^3.4.1",
+    "lodash.clonedeep": "^4.5.0",
+    "muicss": "^0.10.1",
+    "path": "^0.12.7",
+    "popper.js": "^1.16.0",
+    "react": "^16.11.0",
+    "react-bootstrap": "^1.0.0",
+    "react-datetime": "^2.16.3",
+    "react-dom": "^16.11.0",
+    "react-js-pagination": "^3.0.2",
+    "react-loader": "^2.4.6",
+    "react-lottie": "^1.2.3",
+    "react-redux": "^7.1.3",
+    "react-router-dom": "^5.1.2",
+    "react-webcam": "^5.0.0",
+    "redux": "^4.0.4",
+    "redux-devtools-extension": "^2.13.8",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.2",
+    "utf8": "^3.0.0",
+    "uuid": "^3.3.3",
+    "webpack-encoding-plugin": "^0.3.1"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.26.7",
+    "browser-sync-webpack-plugin": "^2.2.2",
+    "hint": "^5.4.1",
+    "react-infinite-scroller": "^1.2.4",
+    "style-loader": "^1.0.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
+  }
+}
