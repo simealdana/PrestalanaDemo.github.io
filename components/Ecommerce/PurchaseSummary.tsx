@@ -7,7 +7,7 @@ var ItemDetailToBuy = require('./ItemDetailToBuy').default;
 var Section = require('./Section').default;
 var PaymentGateway = require('./PaymentGateway').default;
 var ClientHistory = require('./ClientHistory').default;
-var CreateClient = require('../Clients/CreateUser').default;
+var UpClient = require('../Clients/UpClient').default;
 var GenericScripts = require('../../GenericScripts/Script');
 var resources = require('./../../Resources');
 var Redirect = require('react-router-dom').Redirect;
@@ -203,7 +203,7 @@ class PurchaseSummary extends React.Component {
         const subSection =
             isHistory === false && isInformation === false ? sumarySection :
                 isHistory === true && isInformation === false ? (<ClientHistory />) :
-                    isHistory === false && isInformation === true ? (<CreateClient clientSelected={clientSelected} />) :
+                    isHistory === false && isInformation === true ? (<UpClient/>) :
                         (<div />);
         return (
             <div >

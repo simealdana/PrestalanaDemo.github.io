@@ -9,7 +9,6 @@ var IndexEcommerce = require('../Ecommerce/Index').default;
 var ProductDetail = require('../Ecommerce/ProductDetail').default;
 var CategoryDetail = require('../Ecommerce/CategoryDetail').default;
 var SearchClient = require('../Clients/SearchClient').default;
-var NewClient = require('../Clients/CreateUser').default;
 var UploadFile = require('../UploadFile/UploadFile').default;
 const Upclient = require('../Clients/UpClient').default;
 var PurchaseSummary = require('../Ecommerce/PurchaseSummary').default;
