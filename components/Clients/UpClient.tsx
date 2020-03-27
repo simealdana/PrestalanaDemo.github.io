@@ -95,9 +95,9 @@ class Upclient extends React.Component{
     getCoOwners = ()=>{
         // Llamada get al backend
         let mockCoOwners = [
-            {Nombre:'Simeon',ApellidoPaterno:'Aldana',ApellidoMaterno:'Vasquez',Nacionalidad:'Venezolano',TelefonoMovil:'65336844'},
-            {Nombre:'Simeon',ApellidoPaterno:'Aldana',ApellidoMaterno:'Vasquez',Nacionalidad:'Venezolano',TelefonoMovil:'65336844'},
-            {Nombre:'Simeon',ApellidoPaterno:'Aldana',ApellidoMaterno:'Vasquez',Nacionalidad:'Venezolano',TelefonoMovil:'65336844'},
+            {Nombres:'Simeon',ApellidoPaterno:'Aldana',ApellidoMaterno:'Vasquez',Nacionalidad:'Venezolano',TelefonoMovil:'65336844'},
+            {Nombres:'Simeon',ApellidoPaterno:'Aldana',ApellidoMaterno:'Vasquez',Nacionalidad:'Venezolano',TelefonoMovil:'65336844'},
+            {Nombres:'Simeon',ApellidoPaterno:'Aldana',ApellidoMaterno:'Vasquez',Nacionalidad:'Venezolano',TelefonoMovil:'65336844'},
         ]
         this.setState({...this.state,coownersList:mockCoOwners});
     }
@@ -225,14 +225,15 @@ class Upclient extends React.Component{
         const { clientSelected, client, itentificationTypes, cities, civilStatus, entities, colonies, municipies, documentAdressProofList, documentAdressProofClient, coOwners, isEdit, updateUpdateClient, nationalities, beneficiaries, economicActivity, clientTypes} = this.props
         const { showModal, selectedFiles } = this.state;
         const disableDivs = { 'display': 'none' };
+
         return(
             <div>
                 <div className="nav nav-tabs row">
                     <div className="nav-item col-3 text-center">
-                        <a className="nav-link select" id="home-tab" data-toggle="tab" onClick={()=>this.progressBar(25)} href="#cliente_1" role="tab" aria-controls="home">Información General</a>
+                        <a className="nav-link select" id="home-tab"  onClick={()=>this.progressBar(25)}  aria-controls="home">Información General</a>
                     </div>
                     <div className="nav-item col-3 text-center">
-                        <a className="nav-link disabled" id="coowners-tab" onClick={()=>this.progressBar(50)} data-toggle="tab" href="#cliente_4" role="tab" aria-controls="contact">Huella</a>
+                        <a className="nav-link " id="coowners-tab" onClick={()=>this.progressBar(50)} data-toggle="tab" href="#cliente_4" role="tab" aria-controls="contact">Huella</a>
                     </div>
                     <div className="nav-item col-3 text-center">
                         <a className="nav-link " id="documents-tab" data-toggle="tab" href="#cliente_3"onClick={()=>this.progressBar(75)}  role="tab" aria-controls="contact" >Comprobantes</a>
@@ -245,8 +246,8 @@ class Upclient extends React.Component{
 
             {this.state.step === 25 ?   
             <form onSubmit={()=>this.handleSubmit()}>
-                <div className="tab-content" id="myTabContent">
-                    <div className="tab-pane fade cliente-info-general" id="cliente_1" role="tabpanel" aria-labelledby="cliente1-tab">
+                <div>
+                    <div className=" cliente-info-general" >
                         <div className="form ">
                         <div className="container-form">
                             <div className="d-flex justify-content-between px-2 py-4">
@@ -542,10 +543,58 @@ class Upclient extends React.Component{
             <div></div>
             }
 
+            {this.state.step === 50 ? 
+            <div >
+                <div className="col-12 row px-2 py-4">
+                    <div className="col pl-2">
+                        <span>Registro de Cliente Nuevo</span>
+                    </div>
+                    <div className="d-flex justify-content-between col-4">
+                        <button className="btns btn-go" onClick={()=>this.progressBar(25)} >Atras</button>
+                        <button type="submit" className="btns btn-go" onClick={()=>this.progressBar(75)}>Guardar</button>
+                    </div>
+                </div>
+                <div className="dp-flex justify-content-around p-5">
+                    <div className="hand text-center">
+                        <div>
+                            <img src="../../images/hand-left.PNG" alt="hand-left" />
+                            <div className="finger finger-1"></div>
+                            <div className="finger finger-2"></div>
+                            <div className="finger finger-3"></div>
+                            <div className="finger finger-4 "></div>
+                            <div className="finger finger-5"></div>
+                        </div>
+                        {/* <span>Mano izquierda</span> */}
+                    </div>
+                    <div className="container-fingerprint d-flex flex-column">
+                        <div className="box-finger d-flex justify-content-center">
+                            <img src="../../images/huella.PNG"/>
+                            <span className="fingerprint"></span>
+                        </div>
+                        <div className="d-flex justify-content-center pt-3">
+                            <a href="#" className="btns btn-se swal-save">Capturar huella</a>
+                        </div>
+                    </div>
+                    <div className="hand text-center">
+                        <div>
+                            <img src="../../images/hand-rigth.PNG" alt="hand-left" />
+                            <div className="finger finger-6 "></div>
+                            <div className="finger finger-7"></div>
+                            <div className="finger finger-8"></div>
+                            <div className="finger finger-9"></div>
+                            <div className="finger finger-10"></div>
+                        </div>
+                        {/* <span>Mano derecha</span> */}
+                    </div>
+                </div>
+            </div>
+            :<div></div>
+            }
+
             {this.state.step === 75 ? 
             <div>
                 <div id="cliente_3">
-                    <form className="w-100">
+                    <form className="w-100" onSubmit={()=>this.handleSubmit()}>
                         <div className="form">
                             <div className="container-form">
                                 <div className="row px-2 py-4">
@@ -557,7 +606,7 @@ class Upclient extends React.Component{
                                         <button type="submit" className="btns btn-go">Guardar</button>
                                     </div>
                                 </div>
-                                <div className="row col-8">
+                                <div className="row col-8 pt-2">
                                     <div className="mui-select col-4">
                                             <select className="select-text" id="documentType" onSelect={()=>{this.handleChange(event)}} value={this.state.documentType} required>
                                                 <option  value="-" disabled selected>Seleccione</option>
@@ -583,47 +632,35 @@ class Upclient extends React.Component{
                             </div>
                         </div>
                     </form>
-                        <div className="contenedor-imagenes col-8">
-                            <div className="contenedor-selector">
-                                <input type="file" onChange={()=>{this.handleSetImagem(event)}}/>
-            
-                                {
-                                        
-
-                                        this.state.selectedFiles.length > 0 ?
-                                        this.state.selectedFiles.map((file, index) => {                                      
-                                        <div >
-                                            <img  className="activada" src={this.state.imageSrc} width="200px" height="200px" onClick={() => this.setImageZoom(file.image)} />
-                                            <span className="numero">{index}</span>
-                                        </div>
-                                        })
-                                        :
-                                        <div>                                        <img  className="activada" src={this.state.imageSrc} width="200px" height="200px"  />
-                                            </div>
-
-                                } 
+                        <div className="contenedor-imagenes col-8 row pt-3">
+                            <div className="contenedor-selector row  flex-row mb-0 w-100">
+                                <div className="cliente-info-general d-flex flex-column col-4">
+                                    <div className="photo-cliente  p-0">
+                                            <div className="photo w-100">-</div>
+                                    </div>
+                                    <div className="photo-cliente  p-0">
+                                        <div className="photo w-100">-</div>
+                                    </div>
+                                    <div className="photo-cliente  p-0">
+                                            <div className="photo w-100">-</div>
+                                    </div>
+                                    <div className="btn-captura">
+                                        <input type="file" onChange={()=>{this.handleSetImagem(event)}}/>
+                                        <a href="#" className="btns btn-se">Capturar</a>
+                                        <span className="popover-info" data-toggle="popover" data-content="Toma 3 fotografías de la papeleta, selecciona la mejor y asegúrate de que sea legible.
+                                                La foto presentada en el recuadro grande es la que se guardará.">
+                                                <i className="material-icons">info</i>
+                                        </span>
+                                    </div>
                                 </div>
-                                {/* {
-                                    selectedFiles.length === 0 ? 
-                                    <div className="zoom-imagen">
-                                            <img id="zoom" src={documentAdressProofClient.length > 0 ? documentAdressProofClient[0].RutaImagen : ""} onClick={() => this.cambiarImagen(this)} />
-                                        <i className="material-icons foto-zoom" data-toggle="modal" data-target="#zoom-foto">search</i>
-                                        </div> :
-                                        <div className="zoom-imagen">
-                                            <img id="zoom" src={selectedFiles[0].image} onClick={() => this.cambiarImagen(this)} />
-                                            <i className="material-icons foto-zoom" data-toggle="modal" data-target="#zoom-foto">search</i>
-                                        </div> 
-                                } */}
-                        </div>
-                        <div className="btn-captura">
-                            <a href="#" className="btns btn-se">Capturar</a>
-                            <span className="popover-info" data-toggle="popover" data-content="Toma 3 fotografías de la papeleta, selecciona la mejor y asegúrate de que sea legible.
-                                    La foto presentada en el recuadro grande es la que se guardará.">
-                                    <i className="material-icons">info</i>
-                            </span>
-                        </div>
+                                <div className="cliente-info-general col-8">
+                                    <div className="photo-cliente  p-0">
+                                            <div className="photo w-100 h-75">-</div>
+                                    </div>
+                                </div>
+                            </div>
                         
-                        <div className="table-responsive col-8">
+                        <div className="table-responsive col-12 pt-3">
                             <table className="table">
                             <thead>
                                 <tr>
@@ -655,19 +692,16 @@ class Upclient extends React.Component{
                             </tbody>
                         </table>
                             </div>
-                        </div>
-                        
-                        <input id="selectFile" type="file" accept="image/x-png,image/gif,image/jpeg" />
-                        <button >Seleccionar documento</button> 
-                        <div><a className="btns btn-go mt-3 save">Guardar</a></div>   
                     </div>
+                </div>
+            </div>
                     :
             <div></div>
             }
             {this.state.step === 100 ?
             <div className="row pl-3">
-             <div className="col-12 row px-2 py-4 ">
-                <div className="col">
+             <div className="col-12 row px-2 py-4">
+                <div className="col pl-2">
                     <span>Registro de Cliente Nuevo</span>
                 </div>
                 <div className="d-flex justify-content-between col-4">
