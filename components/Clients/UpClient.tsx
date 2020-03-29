@@ -1,11 +1,18 @@
 const React = require('react');
 const connect = require('react-redux').connect;
 const Input = require('muicss/lib/react/input');
-import ProgressBar from 'react-bootstrap/ProgressBar'
+
+import ProgressBar from 'react-bootstrap/ProgressBar';
+import {Modal} from 'react-bootstrap';
 const scriptClient = require('./Scripts/Script');
 
 
+
 class Upclient extends React.Component{
+    
+    constructor(prosp) {
+        super(prosp)
+      }
     state = {
         redirect: false,
         idClient: "", //"D6D5EE1E-C748-41FE-B74B-03B5E872744D",
@@ -18,6 +25,7 @@ class Upclient extends React.Component{
         registerDate: "",
         identificationType: 0,
         identificationNumber: "",
+        identificationDate:"",
         clientName: null,
         clientFirstLastName: null,
         clientSecondLastName: null,
@@ -49,6 +57,7 @@ class Upclient extends React.Component{
         lastUserWhoAttendedYou: null,
         referralClientSi: true,
         referralClientNo: false,
+        sucursalDeregistro:"",
         dataForMarketingSi: true,
         dataForMarketingNo: false,
         imageProfile: null,
@@ -72,7 +81,11 @@ class Upclient extends React.Component{
         coownerPhone: null,
         coownersList: [],
         beneficiariesList:[],
-        nationalities:[]
+        nationalities:[],
+
+        //modalDocumentation
+        modalDocumentation:false,
+        modalText:"La Información general"
     }
     componentDidMount() {
         scriptClient.openModal();
@@ -112,21 +125,21 @@ class Upclient extends React.Component{
         this.setState({...this.state,beneficiariesList:mockCoOwners});
     }
 
-    validator = (estado)=>{
-        const state = this.state
-        if(!state.clientName) return true
-    }
 
-    handleSubmit = () => {
-        const valid = this.validator(this.state);
-        if (valid) {
-            alert('Hola')
-        }
+    handleSubmit = e => {
+        e.preventDefault();
+        this.state.step == 25 ? this.setState({...this.state,modalText:"La Información general"}):console.log('');
+        this.state.step == 50 ? this.setState({...this.state,modalText:"Las huellas"}):console.log('');
+        this.state.step == 75 ? this.setState({...this.state,modalText:"Los comprobantes"}):console.log('');
+        this.state.step == 100 ? this.setState({...this.state,modalText:"Los cotitulares"}):console.log('');
+        this.handleOpenModalNext();
+
     };
     
     handleChange = ({target})=>{
         const { id , value} = target;
         this.setState({...this.state,[`${id}`]:value})
+        console.log(this.state)
     }
 
     handleChangeNumber = ({target})=>{
@@ -136,6 +149,22 @@ class Upclient extends React.Component{
             return
         }   
         this.setState({...this.state,[`${id}`]:value})
+    }
+
+    handleChangeDate = ({target})=>{
+        let { id , value} = target;
+        const array = value.split("")
+        if(array.length>10){
+            return
+        }else{
+            if (array.length == 2) {
+                value +='/'
+            }
+            if (array.length == 5) {
+                value +='/'
+            }
+        }
+        this.setState({...this.state,[`${id}`]:value}).bind
     }
 
     handleSetImagem = (e)=>{
@@ -217,13 +246,21 @@ class Upclient extends React.Component{
             }.bind(this);
     }
 
+    handleOpenModalDocumentation = ()=>{
+        this.setState({...this.state,showModal:true,modalDocumentation:true}).bind();
+    }
+    handleOpenModalNext= ()=>{
+        this.setState({...this.state,showModal:true,modalDocumentation:false,step:this.state.step+25});
+        this.progressBar(this.state.step);
+    }
+
     progressBar = (porcentaje:number)=>{
         this.setState({...this.state,step:porcentaje});
     }
 
     render(){
         const { clientSelected, client, itentificationTypes, cities, civilStatus, entities, colonies, municipies, documentAdressProofList, documentAdressProofClient, coOwners, isEdit, updateUpdateClient, nationalities, beneficiaries, economicActivity, clientTypes} = this.props
-        const { showModal, selectedFiles } = this.state;
+        const { selectedFiles ,showModal} = this.state;
         const disableDivs = { 'display': 'none' };
 
         return(
@@ -245,7 +282,7 @@ class Upclient extends React.Component{
             <ProgressBar variant="success" now={this.state.step} />
 
             {this.state.step === 25 ?   
-            <form onSubmit={()=>this.handleSubmit()}>
+            <form onSubmit={()=>this.handleSubmit(event)}>
                 <div>
                     <div className=" cliente-info-general" >
                         <div className="form ">
@@ -273,21 +310,20 @@ class Upclient extends React.Component{
                                 <div className="box-item--form col">
                                     <div className="item-form row py-3">
                                         <div className="mui-textfield col-4">
-                                            <Input label="Input 1" floatingLabel={true} type="text" id="registerDate"  required onChange={()=> this.handleChange(event)}/>
+                                            <input  type="text" id="registerDate"  value={this.state.registerDate} required onChange={()=> this.handleChangeDate(event)}/>
                                             <i className="material-icons icon-calendar">today</i>
+                                            <label  className="select-label">Fecha de registro</label>
                                         </div>
                                         <div className="mui-select col-4">
-                                            <select className="select-text" id="identificationType"  onChange={()=> this.handleChange(event)} required>
-                                                <option>1</option>
-                                                <option>1</option>
-                                                <option>1</option>
+                                            <select className="select-text" id="identificationType"  value={this.state.identificationType} onChange={()=> this.handleChange(event)} required>
+                                                <option value={this.state.identificationType} >Pasaporte</option>
                                             </select>
-                                            <label className="asterisk">Tipo de identificacion</label>
+                                            <label  className="select-label">Tipo de identificacion</label>
                                         </div>
                                         <div className="mui-textfield col-4">
-                                                <input type="text" id="identificationNumber"   onChange={()=> this.handleChange(event)} required />        
+                                                <input type="text" id="identificationNumber"  value={this.state.identificationNumber}  onChange={()=> this.handleChange(event)} required />        
                                                 <label className="asterisk">Numero</label>
-                                            <i className="material-icons" data-toggle="modal" data-target="#modal-documento--identificacion" >attach_file</i>
+                                            <i className="material-icons" data-toggle="modal" data-target="#modal-documento--identificacion" onClick={()=>this.handleOpenModalDocumentation()} >attach_file</i>
                                         </div>
                                     </div>
                                     <div className="item-form row py-3">
@@ -308,7 +344,7 @@ class Upclient extends React.Component{
                                     </div>
                                     <div className="item-form row py-3">
                                             <div className="mui-textfield col-4">
-                                                <input type="text" id="dateOfBirth"  onChange={()=> this.handleChange(event)} required />
+                                                <input type="text" id="dateOfBirth"  value={this.state.dateOfBirth} required onChange={()=> this.handleChangeDate(event)} />
                                                 
                                                 <label className="asterisk">Fecha de nacimiento</label>
                                             <i className="material-icons icon-calendar">today</i>
@@ -316,11 +352,11 @@ class Upclient extends React.Component{
                                             <div className="mui-textfield  col-4">
                                                 <input type="text" id="age" onChange={()=> this.handleChange(event)} required />
                                             
-                                                <label>Edad</label>
+                                                <label className="asterisk" >Edad</label>
                                         </div>
                                             <div className="mui-select col-4">
                                                 <select className="select-text" id="gender" onChange={()=> this.handleChange(event)}  required>
-                                                    <option  selected>Seleccione</option>
+                                                    <option  value="-">Seleccione</option>
                                                     <option  value="M">Masculino</option>
                                                     <option  value="F">Femenino</option>
                                                 </select>
@@ -330,35 +366,42 @@ class Upclient extends React.Component{
                                     <div className="item-form row py-3">
                                         <div className="mui-select col-4">
                                             <select className="select-text" id="nacionality"  onChange={()=> this.handleChange(event)} required>
-                                                <option value="-" disabled selected>Seleccione</option>
+                                                    <option  value="-">Mexicano</option>
+                                                    <option  value="M">Argentino</option>
+                                                    <option  value="F">Venezolano</option>
                                                 {/* {nationalities.length > 0 &&
                                                     nationalities.map(nacionality => {
                                                         return (<option key={uuidv1()} selected value={nacionality.IDNacionalidad}>{nacionality.Nacionalidad}</option>)
                                                     })
                                                 } */}
+                                                <label className="select-label">Nacionalidad</label>
                                             </select>
                                         </div>
                                         <div className="mui-select col-4">
                                             <select className="select-text" id="stateOfBirth"  onChange={()=> this.handleChange(event)} required>
-                                                <option  value="-">Seleccione</option>
+                                                    <option  value="-">Mexico</option>
+                                                    <option  value="M">Estado2</option>
+                                                    <option  value="F">Estado3</option>
                                                 {/* {entities != null &&
                                                     entities.map(entity => {
                                                         return (<option key={uuidv1()} selected value={entity.IDEntidad}>{entity.EntidadFederativa}</option>)
                                                     })
                                                 } */}
                                             </select>
-                                            <label className="asterisk">Estado de nacimiento</label>
+                                            <label  className="select-label">Estado de nacimiento</label>
                                         </div>
                                         <div className="mui-select col-4">
                                             <select className="select-text" id="maritalStatus"   onChange={()=> this.handleChange(event)} required>
-                                                <option value="-">Seleccione</option>
+                                                    <option  value="-">Soltero</option>
+                                                    <option  value="M">Casado</option>
+                                                    <option  value="F">Viduo/viuda</option>
                                                 {/* {civilStatus != null &&
                                                     civilStatus.map(status => {
                                                         return (<option key={uuidv1()} selected value={status.IDEstadoCivil}>{status.EstadoCivil}</option>)
                                                     })
                                                 }                                               */}
                                             </select>
-                                            <label className="asterisk">Estado civil</label>
+                                            <label  className="select-label">Estado civil</label>
                                         </div>
                                     </div>
                                     <div className="item-form row py-3">
@@ -409,7 +452,9 @@ class Upclient extends React.Component{
                                     </div>
                                     <div className="mui-select col-4">
                                         <select className="select-text" id="city" onChange={()=> this.handleChange(event)} required>
-                                            <option  value="-">Seleccione</option>
+                                                    <option  value="-">Mexico</option>
+                                                    <option  value="M">Guadalagara</option>
+                                                    <option  value="F">Cancun</option>
                                             {/* {cities.length > 0 &&
                                                 cities.map(city => {
                                                     return (<option key={uuidv1()} selected value={city.IDCiudad}>{city.Ciudad}</option>)
@@ -428,7 +473,9 @@ class Upclient extends React.Component{
                                 <div className="item-form py-3">
                                     <div className="mui-select col-4">
                                         <select className="select-text" id="colony" onChange={()=> this.handleChange(event)}  required>
-                                            <option value="">Seleccione</option>
+                                                    <option  value="-">Colonia 1</option>
+                                                    <option  value="M">Colonia 2</option>
+                                                    <option  value="F">Colonia 3</option>
                                             {/* {colonies.length > 0 &&
                                                 colonies.map(colony => {
                                                     return (<option key={uuidv1()} selected value={colony.IDColonia}>{colony.Colonia}</option>)
@@ -443,7 +490,8 @@ class Upclient extends React.Component{
                                     </div>
                                     <div className="mui-select col-4">
                                         <select className="select-text" id="economicActivity"  onChange={()=> this.handleChange(event)}>
-                                            <option  value="-">Seleccione</option>
+                                                    <option  value="-">Relacion de dependecia</option>
+                                                    <option  value="M">Monotributo</option>
                                             {/* {economicActivity.length > 0 &&
                                                 economicActivity.map(ea => {
                                                     return (<option key={uuidv1()} value={ea.IDActividadEconomica}>{ea.Descripcion}</option>)
@@ -501,21 +549,12 @@ class Upclient extends React.Component{
                                         <label >¿Comó se enteró de nosotros?</label>
                                     </div>
                                     <div className="mui-textfield col-4">
+                                        <input type="text" id="sucursalDeregistro" onChange={()=> this.handleChange(event)} />
+                                        <label >Sucursal de registro</label>
+                                    </div>
+                                    <div className="mui-textfield col-4">
                                         <input type="text" id="lastUserWhoAttendedYou"  onChange={()=> this.handleChange(event)} />
                                         <label >Último usuario que lo atendió</label>
-                                    </div>
-                                    <div className="radio-button col-4">
-                                        <label className="label-radio">¿Desea ser cliente referenciador?</label>
-                                        <div className="item-radio--button">
-                                            <div className="mui-radio col-4">
-                                                <input type="radio" id="optionsSi"value="Si" onChange={()=> this.handleChange(event)}/>
-                                                <label> Si</label>
-                                            </div>
-                                            <div className="mui-radio col-4">
-                                                <input type="radio" id="optionsNo"value="No" onChange={()=> this.handleChange(event)}/>
-                                                <label> No</label>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                                 <div className="item-form row px-4 py-3">
@@ -528,6 +567,19 @@ class Upclient extends React.Component{
                                             </div>
                                             <div className="mui-radio col-4">
                                                 <input type="radio" id="dataForMarketingNo"value="No" onChange={()=> this.handleChange(event)}/>
+                                                <label> No</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="radio-button col-4">
+                                        <label className="label-radio">¿Desea ser cliente referenciador?</label>
+                                        <div className="item-radio--button">
+                                            <div className="mui-radio col-4">
+                                                <input type="radio" id="optionsSi"value="Si" onChange={()=> this.handleChange(event)}/>
+                                                <label> Si</label>
+                                            </div>
+                                            <div className="mui-radio col-4">
+                                                <input type="radio" id="optionsNo"value="No" onChange={()=> this.handleChange(event)}/>
                                                 <label> No</label>
                                             </div>
                                         </div>
@@ -551,7 +603,7 @@ class Upclient extends React.Component{
                     </div>
                     <div className="d-flex justify-content-between col-4">
                         <button className="btns btn-go" onClick={()=>this.progressBar(25)} >Atras</button>
-                        <button type="submit" className="btns btn-go" onClick={()=>this.progressBar(75)}>Guardar</button>
+                        <button type="submit" className="btns btn-go" onClick={()=>this.handleSubmit(event)}>Guardar</button>
                     </div>
                 </div>
                 <div className="dp-flex justify-content-around p-5">
@@ -594,7 +646,7 @@ class Upclient extends React.Component{
             {this.state.step === 75 ? 
             <div>
                 <div id="cliente_3">
-                    <form className="w-100" onSubmit={()=>this.handleSubmit()}>
+                    <form className="w-100" onSubmit={()=>this.handleSubmit(event)}>
                         <div className="form">
                             <div className="container-form">
                                 <div className="row px-2 py-4">
@@ -608,8 +660,10 @@ class Upclient extends React.Component{
                                 </div>
                                 <div className="row col-8 pt-2">
                                     <div className="mui-select col-4">
-                                            <select className="select-text" id="documentType" onSelect={()=>{this.handleChange(event)}} value={this.state.documentType} required>
-                                                <option  value="-" disabled selected>Seleccione</option>
+                                            <select className="select-text" id="documentType" value={this.state.documentType} required>
+                                                    <option  value="-">Comprobante 1</option>
+                                                    <option  value="M">Comprobante 2</option>
+                                                    <option  value="F">Comprobante 3</option>
                                                 {/* {documentAdressProofList.length > 0 && 
                                                     documentAdressProofList.map(addressProof=> {
                                                         return (<option key={uuidv1()} selected value={addressProof.IDTipoDocumento}>{addressProof.Descripcion}</option>)
@@ -619,12 +673,12 @@ class Upclient extends React.Component{
                                         <label className="asterisk select-label">Comprobante de domicilio</label>
                                     </div>
                                     <div className="mui-textfield mui-textfield--float-label col-4">
-                                        <input type="text" id="beginningOfValidity" onChange={()=>{this.handleChange(event)}} value={this.state.beginningOfValidity} required />
+                                        <input type="text" id="beginningOfValidity" onChange={()=>{this.handleChangeDate(event)}} value={this.state.beginningOfValidity} required />
                                         <label className="asterisk">Inicio de vigencia</label>
                                         <i className="material-icons icon-calendar">today</i>
                                     </div>
                                     <div className="mui-textfield mui-textfield--float-label col-4">
-                                        <input type="text" id="endOfValidity" onChange={()=>{this.handleChange(event)}} value={this.state.endOfValidity} required />
+                                        <input type="text" id="endOfValidity" onChange={()=>{this.handleChangeDate(event)}} value={this.state.endOfValidity} required />
                                         <label className="asterisk">Fin de vigencia</label>
                                         <i className="material-icons icon-calendar">today</i>
                                     </div>
@@ -705,7 +759,7 @@ class Upclient extends React.Component{
                     <span>Registro de Cliente Nuevo</span>
                 </div>
                 <div className="d-flex justify-content-between col-4">
-                    <button className="btns btn-go" onClick={()=>this.progressBar(75)} >Atras</button>
+                    <button className="btns btn-go" onClick={()=>this.handleSubmit(event)} >Atras</button>
                     <button type="submit" className="btns btn-go">Finalizar</button>
                 </div>
             </div>
@@ -804,11 +858,143 @@ class Upclient extends React.Component{
     </div>
             : <div></div>
             }
-</div>
+            <Modal
+              show={showModal}
+              size="lg"
+              aria-labelledby="contained-modal-title-vcenter"
+              centered
+            >
+              <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                  {this.state.modalDocumentation?
+                  <form>
+                  <div className="row">
+                          <div className="col-12">
+                            <div className="item-form row py-3">
+                                <div className="mui-select col-4">
+                                    <select className="select-text" id="identificationType" value={this.state.identificationType} onChange={()=> this.handleChange(event)} required>
+                                        <option value="Pasaporte" >Pasaporte</option>
+                                        <option value="Cedula">Cedula</option>
+                                        <option value="DNI">DNI</option>
+                                    </select>
+                                    <label className="asterisk">Tipo de identificacion</label>
+                                </div>
+                                <div className="mui-textfield col-4">
+                                        <input type="text" id="identificationNumber"  value={this.state.identificationNumber}  onChange={()=> this.handleChangeNumber(event)} required />        
+                                        <label className="asterisk">Numero</label>
+                                </div>      
+                                <div className="mui-textfield col-4">
+                                    <Input  floatingLabel={true} type="text" id="registerDate" value={this.state.identificationDate} required onChange={()=> this.handleChangeDate(event)}/>
+                                    <i className="material-icons icon-calendar">today</i>
+                                    <label className="asterisk">Vigencia</label>
+                                </div>
+                            </div>
+                          </div>
+                          <div className="col-12">
+                                <div className="row">
+                                    <div className="col-6 cliente-info-general">
+                                    <label className="asterisk">Frente</label>
+                                        <div className="photo-cliente ">
+                                            <div className="photo w-100"></div>
+                                            <div className="d-flex justify-content-center w-100">
+                                                <button type="button"className="btns btn-go m-0" >Capturar foto</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-6 cliente-info-general">
+                                    <label className="asterisk">Detras</label>
+                                        <div className="photo-cliente">
+                                            <div className="photo w-100 "></div>
+                                            <div className="d-flex justify-content-center w-100">
+                                                <button type="button"className="btns btn-go m-0" >Capturar foto</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                          </div>
+                          <div className="col-12 py-4">
+                            <div className="table-responsive pt-4 mt-2">
+                                <table className="table pt-5">
+                                    <thead>
+                                        <tr>
+                                            <th className="bold">Nombres y apellidos</th>
+                                            <th className="text-center bold">Tipo</th>
+                                            <th className="text-center bold">Nacionalidad</th>
+                                            <th className="text-center bold">Teléfono</th>
+                                            <th className="text-center bold"></th>
+                                        </tr>
+                                    </thead>
+                                        <tbody>
+                                            {this.state.coownersList.length > 0 &&
+                                                this.state.coownersList.map((coOwner, index) => {
+                                                    {
+                                                        return (
+                                                            <tr  className={(index % 2) ? "tr-selected" :""} >
+                                                                <td  className="semibold">{coOwner.Nombres +" "+ coOwner.ApellidoPaterno +" "+ coOwner.ApellidoMaterno}</td>
+                                                                <td  className="text-center">Cotitular</td>
+                                                                <td  className="text-center">{coOwner.Nacionalidad}</td>
+                                                                <td  className="text-center">{coOwner.TelefonoMovil}</td>
+                                                                <td  className="text-center">
+                                                                    {/*<i key={uuidv1()} className="material-icons">edit</i>*/}
+                                                                    <i  className="material-icons remove">delete</i>
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    }
+                                                })
+                                            }
+                                            {
+                                                this.state.beneficiariesList.length > 0 &&
+                                                this.state.beneficiariesList.map((beneficiary, index) => {
+                                                    {
+                                                        return (
+                                                            <tr className={(index % 2) ? "tr-selected" : ""} >
+                                                                <td  className="semibold">{beneficiary.Nombres + " " + beneficiary.ApellidoPaterno + " " + beneficiary.ApellidoMaterno}</td>
+                                                                <td  className="text-center">Beneficiario</td>
+                                                                <td  className="text-center">{beneficiary.Nacionalidad}</td>
+                                                                <td  className="text-center">{beneficiary.TelefonoMovil}</td>
+                                                                <td  className="text-center">
+                                                                    {/*<i key={uuidv1()} className="material-icons">edit</i>*/}
+                                                                    <i  className="material-icons remove">delete</i>
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    }
+                                                })
+                                            }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                  </div>
+                </form>
+                  :
+                   <div className="row pb-2">
+                    <div className="col-12 d-flex justify-content-center">
+                            <img src="../../images/correcto.PNG" />
+                    </div>
+                    <div className="col-12 text-center py-2 w-50">
+                        <h3>
+                            ¡{this.modalText}<br></br>fue guardada con exito!
+                        </h3>
+                    </div>
+                  </div> 
+                  }
+              </Modal.Body>
+              <Modal.Footer className="pt-2">
+                <button onClick={()=>this.setState({...this.state,showModal:false,modalDocumentation:false})} className="btns btn-go m-0" >Siguiente</button> 
+              </Modal.Footer>
+            </Modal>
+
+    </div>
         )
     }
 }
 
-export default connect(
 
+export default connect(
+   
 )(Upclient);
