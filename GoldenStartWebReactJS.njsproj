@@ -11,6 +11,7 @@
     <EnableTypeScript>true</EnableTypeScript>
     <TypeScriptSourceMap>true</TypeScriptSourceMap>
     <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
+    <SaveNodeJsSettingsInProjectFile>True</SaveNodeJsSettingsInProjectFile>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -26,7 +27,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
     <NodejsPort>1337</NodejsPort>
-    <StartWebBrowser>true</StartWebBrowser>
+    <StartWebBrowser>True</StartWebBrowser>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,6 +46,11 @@
     <Content Include="components\Ecommerce\Section.tsx">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="components\Fundicion\Asignaciones\Scripts\ScriptConsulta.js" />
+    <Content Include="components\Fundicion\Asignaciones\Scripts\ScriptAsignacion.js" />
+    <Content Include="components\Fundicion\Participantes\Scripts\ScriptParticipantes.js" />
+    <Content Include="components\Fundicion\Scripts\Script.js" />
+    <Content Include="components\Fundicion\Sucursal\Scripts\jquery.hislide.min.js" />
     <Content Include="components\Layout\Scripts\Script.js">
       <SubType>Code</SubType>
     </Content>
@@ -79,6 +85,7 @@
     <Content Include="images\logo-multiapoyo.svg" />
     <Content Include="images\logo_mascara.svg" />
     <Content Include="images\mastercard.png" />
+    <Content Include="images\NoImage.png" />
     <Content Include="images\othercard.png" />
     <Content Include="images\visa.png" />
     <Content Include="index.html">
@@ -94,6 +101,7 @@
     <Content Include="styles\fonts\multiapoyo.svg" />
     <Content Include="styles\fonts\multiapoyo.ttf" />
     <Content Include="styles\fonts\multiapoyo.woff" />
+    <Content Include="styles\jquery.hislide.min.css" />
     <Content Include="styles\Less\asignacion.less" />
     <Content Include="styles\Less\cliente.less" />
     <Content Include="styles\Less\ecommerce.less" />
@@ -121,6 +129,22 @@
     <Folder Include="components\Clients\Scripts\" />
     <Folder Include="components\Dashboard\" />
     <Folder Include="components\Ecommerce\Scripts\" />
+    <Folder Include="components\Fundicion\Asignaciones\" />
+    <Folder Include="components\Fundicion\Asignaciones\Scripts\" />
+    <Folder Include="components\Fundicion\Entrega\" />
+    <Folder Include="components\Fundicion\Fundicion\" />
+    <Folder Include="components\Fundicion\FundidorasyCoberturas\" />
+    <Folder Include="components\Fundicion\Laboratorios\" />
+    <Folder Include="components\Fundicion\FacturaDeFundicion\" />
+    <Folder Include="components\Fundicion\Participantes\Scripts\" />
+    <Folder Include="components\Fundicion\Scripts\" />
+    <Folder Include="components\Fundicion\Pureza\" />
+    <Folder Include="components\Fundicion\Retenciones\" />
+    <Folder Include="components\Fundicion\Participantes\" />
+    <Folder Include="components\Fundicion\Sucursal\" />
+    <Folder Include="components\Fundicion\Sucursal\Scripts\" />
+    <Folder Include="components\Layout\Fundicion\" />
+    <Folder Include="components\Layout\Fundicion\Asignaciones\" />
     <Folder Include="components\Layout\Scripts\" />
     <Folder Include="components\Menu\" />
     <Folder Include="components\Menu\Scripts\" />
@@ -128,6 +152,7 @@
     <Folder Include="components\Ecommerce\" />
     <Folder Include="components\Login\" />
     <Folder Include="components\Clients\" />
+    <Folder Include="components\Fundicion\" />
     <Folder Include="components\ShoppingCar\" />
     <Folder Include="components\ShoppingCar\Scripts\" />
     <Folder Include="components\UploadFile\" />
@@ -140,6 +165,7 @@
     <Folder Include="styles\" />
     <Folder Include="styles\fonts\" />
     <Folder Include="styles\Less\" />
+    <Folder Include="styles\fonts\" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="components\Clients\CreateUser.tsx">
@@ -194,9 +220,19 @@
     <TypeScriptCompile Include="components\Ecommerce\SearchClient.tsx">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="components\Fundicion\Asignaciones\Consulta.tsx" />
+    <TypeScriptCompile Include="components\Fundicion\Asignaciones\Asignacion.tsx" />
+    <TypeScriptCompile Include="components\Fundicion\Asignaciones\Reducer.tsx" />
+    <TypeScriptCompile Include="components\Fundicion\Participantes\Participantes.tsx" />
+    <TypeScriptCompile Include="components\Fundicion\Participantes\Reducer.tsx" />
+    <TypeScriptCompile Include="components\Fundicion\Sucursal\Reducer.tsx" />
+    <TypeScriptCompile Include="components\Fundicion\Sucursal\Scripts\ScriptRecoleccion.js" />
+    <TypeScriptCompile Include="components\Fundicion\Sucursal\Verificacion.tsx" />
+    <TypeScriptCompile Include="components\Layout\Fundicion\FundicionLinks.tsx" />
     <TypeScriptCompile Include="components\Layout\EcommerceLinks.tsx">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="components\Layout\Fundicion\FundicionNavbar.tsx" />
     <TypeScriptCompile Include="components\Layout\Navbar.tsx">
       <SubType>Code</SubType>
     </TypeScriptCompile>

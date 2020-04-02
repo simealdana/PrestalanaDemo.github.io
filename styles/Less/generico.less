@@ -51,7 +51,8 @@ body {
     border-bottom: 1px solid @gray-light;
     position: sticky;
     top: 0;
-    z-index: 1;
+    z-index: 2;
+
     .item-header {
         display: flex;
         justify-content: flex-end;
@@ -67,18 +68,83 @@ body {
             cursor: pointer;
         }
 
+        .cart-buy {
+            .item-cart-buy {
+                display: flex;
+                padding: 15px 20px;
+
+                .img-cart {
+                    height: 84px;
+                    width: 74px;
+                    box-shadow: 0 0 6px 0 rgba(0,0,0,0.85);
+                    margin-right: 20px;
+
+                    img {
+                        height: 100%;
+                        width: 100%;
+                        object-fit: cover;
+                        object-position: center;
+                    }
+                }
+
+                div {
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                label {
+                    color: @gray-text;
+                    font-weight: bold;
+                    font-size: 18px;
+                }
+
+                .value {
+                    color: @green;
+                    font-size: 18px;
+                    padding-top: 3px;
+                }
+
+                .quantity {
+                    font-size: 14px;
+                    font-weight: 300;
+                }
+            }
+
+            .footer-dropdown {
+                padding: 15px 0;
+
+                hr {
+                    width: 85%;
+                    margin: 0 auto;
+                    margin-bottom: 15px;
+                }
+
+                .dropdown-item {
+                    padding: 5px 1.5rem;
+
+                    &:hover {
+                        background-color: transparent;
+                    }
+                }
+
+                .btns {
+                    margin: 15px auto 0;
+                }
+            }
+        }
+
         .dropdown-menu.dropdown-user {
             top: 5px !important;
             text-align: right;
-                        
+
             .cargo, .cerrar {
                 font-size: 12px;
             }
-            .name{
-                &:hover{
-                    background-color:@gray-light;
-                    cursor:pointer;
 
+            .name {
+                &:hover {
+                    background-color: @gray-light;
+                    cursor: pointer;
                 }
             }
 
@@ -90,6 +156,8 @@ body {
         }
     }
 }
+
+
 
 
 ///// Tabs Page Menu /////
@@ -205,6 +273,21 @@ body {
         line-height: 1;
     }
 }
+.label-big {
+    position: relative;
+    top: -20px;
+
+    span {
+        font-size: 12px;
+        font-weight: 400;
+    }
+
+    label {
+        font-size: 20px;
+        margin-top: 10px;
+    }
+}
+
 
 label {
     margin-bottom: 0;
@@ -240,7 +323,15 @@ label {
 }
 
 
-
+.mui-textfield::after {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 10px;
+    height: 2px;
+    content: '';
+    background-color: @gray-text;
+}
 
 input {
     font-size: 16px;
@@ -259,12 +350,27 @@ input:focus {
 }
 
 input:focus ~ label {
-    color: @gray-regular;
-    line-height: 1.24;
+    color: @gray-regular !important;
+    line-height: 1.24 !important;
 }
 
-input:valid ~ label{
-    font-size:14px;
+input:valid ~ label {
+    font-size: 12px !important;
+    color: @gray-regular !important;
+}
+
+input ~ label {
+    font-size: 12px !important;
+    line-height: 1.24 !important;
+    top: -15px;
+    color: @gray-regular !important;
+}
+
+input:required ~ label {
+    font-size: 12px !important;
+    line-height: 1.24 !important;
+    top: -15px;
+    color: @gray-regular !important;
 }
 
 input:-webkit-autofill,
@@ -325,18 +431,20 @@ input:focus ~ label, input:valid ~ label {
     height: 100%;
     padding-right:30px;
     padding-top:0 !important;
+    margin-bottom: 45px !important;
     color:@gray-text !important;
 
 }
 
 .mui-select__menu {
     top: 33px !important;
-    height:auto !important;
-    width: ~"calc(100% - 35px)!important";
+    max-height:200px !important;
+    width:100% !important;
     min-width:auto !important;
     div{
         height:35px !important;
         line-height:35px !important;
+        font-size:12px; 
     }
 }
 
@@ -347,6 +455,7 @@ input:focus ~ label, input:valid ~ label {
     width: 10px;
     height: 2px;
     content: '';
+    background-color: @gray-text;
 }
 
 .select-text {
@@ -559,11 +668,11 @@ input:focus ~ label, input:valid ~ label {
     width: 100%;
 
     span {
-        width: 10%;
+        width: 20%;
     }
 
     hr {
-        width: 90%;
+        width: 80%;
     }
 }
 
@@ -778,6 +887,10 @@ i {
 
 
 ///// modal ////
+#modal-search--client {
+    background-color: rgba(0, 0, 0, 0.5)
+}
+
 .modal-lg--950px {
     max-width: 950px;
 }
@@ -879,7 +992,7 @@ i {
 
     input:focus ~ label, input:valid ~ label {
         font-size: 16px;
-        color: @gray-text
+        color: @gray-text 
     }
 
 
@@ -1480,6 +1593,9 @@ i {
     color: @green;
     border: 1px solid @green;
     background: rgba(122,193,67, 0.15);
+    i{
+        color:@green
+    }
 
 }
 
@@ -1554,27 +1670,33 @@ i {
 }
 
 
-.loading {
+.loader {
     height: ~"calc(100% - 69px)";
     width: ~"calc(100% - 70px)";
     position: absolute;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.08);
     top: 67px;
+    right:0;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.loader {
-    width: 100px;
-    height: 100px;
+.spinner {
+    width: 100px !important;
+    height: 100px !important;
     border-radius: 100%;
-    position: relative;
     margin: 0 auto;
+    position:absolute;
+    z-index:2000;
+    div{
+        display:none;
+    }
 }
 
 
-#loader-1:before, #loader-1:after {
+
+.spinner:before, .spinner:after {
     content: "";
     position: absolute;
     top: -10px;
@@ -1582,16 +1704,16 @@ i {
     width: 100%;
     height: 100%;
     border-radius: 100%;
-    border: 10px solid transparent;
+    border: 10px solid white;
     border-top-color: #AAB2BD;
 }
 
-#loader-1:before {
+.spinner:before {
     z-index: 100;
     animation: spin 1s infinite;
 }
 
-#loader-1:after {
+.spinner:after {
     border: 10px solid #E6E9EE;
 }
 
@@ -1616,3 +1738,4 @@ i{
     display:inline-flex;
     color:@gray-text;
 }
+

@@ -38,9 +38,9 @@ export function handleHideAge() {
 
 export function handleSpinner(show) {
     if (show) {
-        $("#loader").show();
+        $(".loader").show();
     } else {
-        $("#loader").hide();
+        $(".loader").hide();
     }
 }
 
@@ -82,5 +82,7 @@ export function handleOpenUploadImage() {
         }
     }
 }
+
+
 
 

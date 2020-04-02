@@ -21,8 +21,8 @@ class UserLinks extends React.Component {
 
         return (
             <div key={uuidv1()} className="item-header col-2">
-                <a key={uuidv1()} id="dropdownCar" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i className="material-icons">shopping_cart</i></a>
-                <div key={uuidv1()} className="dropdown-menu dropdown-menu-right dropdown-user" aria-labelledby="dropdownCar">
+                <a key={uuidv1()} id="dropdownCar" className="mr-3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i className="material-icons">shopping_cart</i></a>
+                <div key={uuidv1()} className="dropdown-menu dropdown-menu-right cart-buy" aria-labelledby="dropdownCar">
                     {
                         cart.length === 0
                             ? <a key={uuidv1()} className="dropdown-item nombre" href="#">Carrito de compras vacio.</a>
@@ -32,10 +32,15 @@ class UserLinks extends React.Component {
                                 totalSale = item.Avaluo + totalSale;
                                 return (
 
-                                    <a className="dropdown-item nombre" href="#">
-                                        {item.Descripcion}
-                                        <span className="cargo">${item.Avaluo}</span>
-                                        <span className="cargo">Cantidad 1</span>
+                                    <a className="dropdown-item item-cart-buy" href="#">
+                                        <div className="img-cart">
+                                            <img src={`data:image/jpeg;base64,${item.Document.Documento}`} alt={item.Descripcion} />
+                                        </div>
+                                        <div>
+                                            <label>{item.Descripcion}</label>
+                                            <span className="value">${item.Avaluo}</span>
+                                            <span className="quantity">Cantidad 1</span>
+                                        </div>
                                     </a>
 
                                 )
@@ -44,16 +49,17 @@ class UserLinks extends React.Component {
                     {
                         cart.length === 0
                             ? null
-                            : <div key={uuidv1()}>
-                                <a key={uuidv1()} className="dropdown-item nombre" href="#">Valor Compra total: ${totalSale}</a>
-                                <a key={uuidv1()} className="dropdown-item nombre" href="#">Valor Minimo apartado: $0.00</a>
+                            : <div className="footer-dropdown" key={uuidv1()}>
+                                <hr/>
+                                <span key={uuidv1()} className="dropdown-item">Valor Compra total: <span className="bold">${totalSale}</span></span>
+                                <span key={uuidv1()} className="dropdown-item">Valor Minimo apartado: <span className="bold">$0.00</span></span>
                                 <a key={uuidv1()} onClick={() => this.handleSearchClient()} className="btns btn-go add">Proceder Compra</a>
                              </div>
                     }
 
                 </div>
 
-                <NavLink key={uuidv1()} href="#" to="/"><i key={uuidv1()} className="material-icons icon-notification">notifications</i></NavLink>
+                <NavLink key={uuidv1()} href="#" to="/"><i key={uuidv1()} className="material-icons icon-notification mr-3">notifications</i></NavLink>
                 <img key={uuidv1()} src={userPhoto} />
                 <a key={uuidv1()} id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i className="material-icons arrow-down">keyboard_arrow_down</i></a>
                 <div key={uuidv1()} className="dropdown-menu dropdown-menu-right dropdown-user" aria-labelledby="dropdownMenuLink">

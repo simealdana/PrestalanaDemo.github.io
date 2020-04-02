@@ -1,6 +1,7 @@
 ﻿declare var require: any
 
 var React = require('react');
+var Redirect = require('react-router-dom').Redirect;
 var scriptMenu = require('./Scripts/Script');
 var resources = require('../../Resources');
 var uuidv1 = require('uuid/v1');
@@ -15,7 +16,8 @@ class Menu extends React.Component {
 
     state = {
         menu: null,
-        token: null
+        token: null,
+        redirect: false
     }
 
     componentDidMount() {
@@ -24,6 +26,28 @@ class Menu extends React.Component {
         scriptMenu.resizeMenu();
         this.handleUser();
     }
+
+    renderRedirect = () => {
+        const { updateUpdateIsEditClient } = this.props;
+        updateUpdateIsEditClient(true);
+        if (this.state.redirect) {
+            return (
+                <Redirect
+                    to={{
+                        pathname: "/newClient"
+                    }}
+                />
+            );
+        }
+    }
+
+    setRedirect = () => {
+        const { updatePathnameRedirect } = this.props;
+        updatePathnameRedirect("/")
+        this.setState({
+            redirect: true
+        });
+    };
 
     //Pasar esto al login cuando sea implementado
     handleUser = async () => {
@@ -118,9 +142,34 @@ class Menu extends React.Component {
                         <a href="#">
                             <div className="dp-flex">
                                 <i className="icon-add material-icons">add</i>
-                              <span>Item Top</span>
+                                <span>Item Top</span>
                             </div>
                         </a>
+                    </li>
+                    <li className="item-menu">
+                        <a href="#">
+                            <div className="dp-flex">
+                                <i className="material-icons">local_offer</i>
+                                <span>Ventas</span>
+                            </div>
+                            <i className="material-icons icon-keyboard-arrow-down">keyboard_arrow_down</i>
+                        </a>
+                        <ul>
+                            <li><a id="#">Item 1</a></li>
+                            <li><a id="#">Item 2</a></li>
+                        </ul>
+                    </li>
+                    <li className="item-menu">
+                        <a href="#">
+                            <div className="dp-flex">
+                                <i className="material-icons">group</i>
+                                <span>Clientes</span>
+                            </div>
+                            <i className="material-icons icon-keyboard-arrow-down">keyboard_arrow_down</i>
+                        </a>
+                        <ul>
+                            <li><a onClick={() => this.setRedirect()}>Cliente Nuevo</a></li>
+                        </ul>
                     </li>
                 </ul>
 
@@ -164,19 +213,32 @@ class Menu extends React.Component {
                     }
                 </ul>
 
-              
+
 
                 <div key={uuidv1()} className="lenguage">
                     <img src={banderaUnitaria} alt="Alternate Text" />
                     <span>MXN</span>
                 </div>
+                {this.renderRedirect()}
             </div>
         );
 
     }
 }
 
+function mapDispatchToProps(dispatch) {
+    return {
+        updateUpdateIsEditClient: isEdit => {
+            dispatch({ type: "UPDATE_IS_EDIT", payload: isEdit })
+        },
+        updatePathnameRedirect: pathnameRedirect => {
+            dispatch({ type: "UPDATE_GLOBAL_REDIRECT", payload: pathnameRedirect })
+        }
+    }
+}
+
+
 export default connect(
     null,
-    null
+    mapDispatchToProps
 )(Menu);

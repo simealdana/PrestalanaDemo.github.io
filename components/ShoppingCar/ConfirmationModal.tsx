@@ -31,11 +31,11 @@ class ConfirmationModal extends React.Component {
 
 
         return (
-            <div key={uuidv1()}  className="modal" id="modal-buy--product">
+            <div key={uuidv1()} className="modal" id="modal-buy--product" data-keyboard="false" data-backdrop="static">
                 <div key={uuidv1()}  className="modal-dialog modal-xl">
                     <div key={uuidv1()}  className="modal-content">
                         <div key={uuidv1()}  className="modal-header">
-                            <div key={uuidv1()}  className="message-success">
+                            <div key={uuidv1()}  className="message message-success">
                                 <i key={uuidv1()}  className="material-icons">done</i>
                                 <span key={uuidv1()} >Producto agregado con éxito a su carrito de compras</span>
                             </div>

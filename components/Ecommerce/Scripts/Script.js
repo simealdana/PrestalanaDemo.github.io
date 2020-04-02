@@ -147,9 +147,32 @@ export function setTapPayment(idTabToActivate, idTabToBlock) {
     var element = document.getElementById(idTabToActivate);
     var elementToBlock = document.getElementById(idTabToBlock);
     element.classList.add("show");
-    elementToBlock.classList.remove("show");   
+    elementToBlock.classList.remove("show");
 }
 
 export function setFocus(focusControll) {
     document.getElementById(focusControll).focus();
+}
+
+export function openIframe(base64PDF) {
+    //var tabOrWindow = window.open(url);
+   // var tabOrWindow = window.open("data:application/pdf;base64," + base64PDF);
+
+    var objbuilder = '';
+    objbuilder += ('<object width="100%" height="100%"      data="data:application/pdf;base64,');
+    objbuilder += (base64PDF);
+    objbuilder += ('" type="application/pdf" class="internal">');
+    objbuilder += ('<embed src="data:application/pdf;base64,');
+    objbuilder += (base64PDF);
+    objbuilder += ('" type="application/pdf" />');
+    objbuilder += ('</object>');
+
+    var win = window.open("", "_blank", "titlebar=yes");
+    win.document.title = "My Title";
+    win.document.write('<html><body>');
+    win.document.write(objbuilder);
+    win.document.write('</body></html>');
+    win.focus();
+
+    //tabOrWindow.focus();
 }

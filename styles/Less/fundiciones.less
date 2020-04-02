@@ -257,9 +257,12 @@
     .zoom-imagen {
         margin: 5px 10px;
         position: relative;
+        height: 270px;
+        min-width: 460px;
+        background: @gray-light;
 
         img {
-            height: 270px;
+            height: 100%;
             border: 2px solid @green;
         }
 
@@ -279,13 +282,15 @@
     }
 }
 
-.btn-captura {
+.btn-capture {
     display: flex;
-    align-items:center;
+    align-items: center;
+    margin: 10px;
 
     .btns {
         height: 30px;
         margin-left: 0;
+        max-width: 240px;
     }
 
     .popover-info {

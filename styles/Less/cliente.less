@@ -1,5 +1,7 @@
 ﻿.cliente-info-general {
     .photo-cliente {
+        height: 100%;
+        width: 100%;
         padding: 0 30px 0 0;
 
         .photo {
@@ -15,17 +17,20 @@
             i {
                 font-size: 40px;
             }
+
+            img {
+                height: 100%;
+            }
+        }
+        .photoPerfil{
+            height: 300px !important;
         }
 
         .btn-se {
             min-width: 135px;
             max-width: 135px;
+            margin:0;
         }
-    }
-
-    .photo-cliente{
-        height:100%;
-        width:100%;
     }
 }
 
@@ -115,6 +120,7 @@
 
         td {
             padding-bottom: 0;
+            cursor: pointer;
         }
 
         i {
@@ -373,6 +379,18 @@
             margin-bottom: 0px;
             padding-bottom: 0;
         }
+
+        .form{
+            padding:20px 0;
+            .label-value{
+                position:relative;
+                top:-25px;
+                label{
+                    font-size:20px;
+                    padding-top:8px;
+                }
+            }
+        }
     }
 }
 
@@ -429,6 +447,24 @@
     justify-content: flex-start;
     flex-wrap: wrap;
 
+}
+
+.button-wrapper{
+    position: relative;
+	width: 100%;
+	text-align: center;
+    cursor: pointer;
+    #documentFileInput {
+        display: inline-block;
+        position: absolute;
+        z-index: 1;
+        width: 100%;
+        height: 50px;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        cursor: pointer;
+    }
 }
 
 .item-dashboard {

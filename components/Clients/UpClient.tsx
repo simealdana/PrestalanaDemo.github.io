@@ -18,14 +18,17 @@ class Upclient extends React.Component{
         idClient: "", //"D6D5EE1E-C748-41FE-B74B-03B5E872744D",
         idFolder: "",// "66237",
         idRowDocument: "",
-        step: 25,
+        step: 16,
         objectImage: null,
         showModal: false,
         disable: false,
         registerDate: "",
-        identificationType: 0,
+        identificationType: "0",
         identificationNumber: "",
         identificationDate:"",
+        identificationPredeterminada:false,
+        identificationList:[],
+        addIdentification:false,
         clientName: null,
         clientFirstLastName: null,
         clientSecondLastName: null,
@@ -68,7 +71,9 @@ class Upclient extends React.Component{
         documentType: "-",
         selectedFiles: [],
         pothos: [],
-        imageSrc: null, 
+        imageSrc: null,
+        aHeadImgIden:null,
+        backImgIden:null,
 
         //coowner
         coownerName: null,
@@ -125,6 +130,14 @@ class Upclient extends React.Component{
         this.setState({...this.state,beneficiariesList:mockCoOwners});
     }
 
+    getIndetifications= ()=>{
+        //llamado a bankend
+        const Indetifications = [{identificationType: 0,identificationNumber: "12345678",identificationDate:"12/12/2020",},
+        {identificationType: 0,identificationNumber: "12345678",identificationDate:"12/12/2020",},
+        {identificationType: 0,identificationNumber: "12345678",identificationDate:"12/12/2020",}]
+        this.setState({...this.state,identificationList:Indetifications})
+    }
+
 
     handleSubmit = e => {
         e.preventDefault();
@@ -139,7 +152,13 @@ class Upclient extends React.Component{
     handleChange = ({target})=>{
         const { id , value} = target;
         this.setState({...this.state,[`${id}`]:value})
-        console.log(this.state)
+    }
+    handleChangeCheckBox = ({target})=>{
+        let { id , value} = target;
+        if (value === "on") {
+            value = true;
+        }
+        this.setState({...this.state,[`${id}`]:value})
     }
 
     handleChangeNumber = ({target})=>{
@@ -164,124 +183,179 @@ class Upclient extends React.Component{
                 value +='/'
             }
         }
-        this.setState({...this.state,[`${id}`]:value}).bind
+        this.setState({...this.state,[`${id}`]:value}).bind();
     }
 
-    handleSetImagem = (e)=>{
+    handleChandeIdentification = (add:boolean,identification?:any)=>{
+
+            let auxList = this.state.identificationList;
+            let valid:boolean=true
+             auxList.forEach((element)=>{ 
+                 if (element.identificationType === this.state.identificationType) {
+                    valid=false
+                 }});
+            if (add && valid ) {        
+                if (this.state.identificationDate !=='' && this.state.identificationNumber !== '') {
+                    const identificationInfo = {
+                       identificationType: this.state.identificationType,
+                       identificationNumber: this.state.identificationNumber,
+                       identificationDate:this.state.identificationDate,
+                       predeterminado:true?this.state.identificationList.length === 0 : false
+                   }
+                   auxList.push(identificationInfo);
+                }
+            }else if (!add){
+                auxList= []
+                this.state.identificationList.forEach((element)=>{
+                    if (element !== identification) {
+                        auxList.push(element)
+                    }
+                });        
+            }
+            this.setState({...this.state,
+                identificationList:auxList,
+                identificationNumber: "",
+                identificationDate:"",
+            });
+        
+    }
+    handleOpenModalDocumentation = (identificacion:any)=>{
+        this.setState({...this.state,
+            showModal:true,
+            modalDocumentation:true,
+            identificationType: identificacion.identificationType,
+            identificationNumber: identificacion.identificationNumber,
+            identificationDate: identificacion.identificationDate,
+            identificationPredeterminada:identificacion.predeterminado
+        }).bind();
+    }
+    handleModificationIdentification = ()=>{
+        let auxModific:any= {};
+        const identificationInfo = {
+            identificationType: this.state.identificationType,
+            identificationNumber: this.state.identificationNumber,
+            identificationDate:this.state.identificationDate,
+            predeterminado:this.state.identificationPredeterminada
+        }
+        if (identificationInfo.predeterminado && this.state.identificationList.some(e=> e.predeterminado) && this.state.identificationList.length > 1) {
+            auxModific = this.state.identificationList.find(e=> e.predeterminado)
+        }
+        let auxList = [];
+        this.state.identificationList.forEach((element)=>{
+            if (auxModific && auxModific === element) {
+                element.predeterminado = false;
+            }
+            if (element.identificationType === this.state.identificationType) {
+                element = identificationInfo
+            }
+            auxList.push(element);
+        });
+        this.setState({...this.state,
+            showModal:false,
+            modalDocumentation:false,
+            identificationList:auxList,
+            identificationNumber: "",
+            identificationDate:"",
+            identificationPredeterminada:false
+        }).bind();
+
+    }
+
+    handleSetImagenIdentification = async (e,description:string)  =>{
         e.preventDefault();
+
+        let reader = new FileReader();
+        let file = e.target.files[0];
         let files = this.state.selectedFiles;
-        let auxImg:any = ""
-        files.push(e.target.files)    
-        let file = e.target.files[0],
-        pattern = /image-*/,
-        reader = new FileReader(),
-        self = this
-        
-        if (!file.type.match(pattern)) {
-            alert('Formato inválido');
-            return;
+        files.push(file);
+
+        reader.onloadend = () => {
+            switch (description) {
+                case 'perfil':
+                    this.setState({
+                        selectedFiles: files,
+                        imageSrc: reader.result
+                      });
+                    break;
+                case 'aHeadImgIden':
+                    this.setState({
+                        selectedFiles: files,
+                        aHeadImgIden: reader.result
+                      });
+                    break;
+                case 'backImgIden':
+                    this.setState({
+                        selectedFiles: files,
+                        backImgIden: reader.result
+                      });
+                    break;
+            
+                default:
+                    this.setState({
+                        selectedFiles: files,
+                        backImgIden: reader.result
+                      });
+                    break;
+            }
         }
-        
-        this.setState({...this.state,selectedFiles:files});
-        reader.onload = (e)=>{
-            reader.result;
-        }
-        setTimeout(() => {
-            this.setState({...this.state,imageSrc:reader.result});
-            console.log(this.state)
-        }, 1000);
-        
-        reader.readAsDataURL(file);
+    
+        reader.readAsDataURL(file)
     }
 
     setImageZoom = image => {
         scriptClient.zoom(image);
     };
 
-    handleUpload(e) {
-        let images = [];
-        let objImage = {
-            id: 0,
-            image: null,
-            documentTypeLabel: "",
-            documentTypeId: 0,
-            endOfValidity: "",
-            beginningOfValidity: "",
-            status: ""
-        };
 
-        const { selectedFiles } = this.state;
-        e.preventDefault();
-        var element = e.target.files[0];
-            var reader = new FileReader();
-            reader.readAsDataURL(element);
-        reader.onloadend = function () {
-
-            var documentType = document.getElementById('documentType') as HTMLInputElement;
-            var beginningOfValidity = document.getElementById('beginningOfValidity') as HTMLInputElement;
-            var endOfValidity = document.getElementById('endOfValidity') as HTMLInputElement;
-            var beginningOfValidity = document.getElementById('beginningOfValidity') as HTMLInputElement;
-
-            var GivenDate = endOfValidity.value;
-            var CurrentDate = new Date();
-            var DateGivenDate = new Date(GivenDate);
-
-            selectedFiles.map(image => {
-                images.push(image);
-            });
-            objImage.id = images.length === 0 ? 0 : images[images.length - 1].id + 1;
-            objImage.image = reader.result;
-            objImage.documentTypeLabel = this.props.documentAdressProofList.find(document => document.IDTipoDocumento === Number(documentType.value)).Descripcion;
-            objImage.documentTypeId = Number(documentType.value);
-            objImage.endOfValidity = endOfValidity.value;
-            objImage.beginningOfValidity = beginningOfValidity.value;
-            objImage.status = DateGivenDate > CurrentDate? "Fundido": "No Fundido"
-
-            images.push(objImage);
-            this.setState({ selectedFiles: images }, function () {
-                documentType.value = "-";
-                beginningOfValidity.value = "";
-                endOfValidity.value = "";
-            });
-            }.bind(this);
-    }
-
-    handleOpenModalDocumentation = ()=>{
-        this.setState({...this.state,showModal:true,modalDocumentation:true}).bind();
-    }
     handleOpenModalNext= ()=>{
         this.setState({...this.state,showModal:true,modalDocumentation:false,step:this.state.step+25});
         this.progressBar(this.state.step);
     }
 
     progressBar = (porcentaje:number)=>{
-        this.setState({...this.state,step:porcentaje});
+        this.setState({...this.state,step:porcentaje,showModal:false});
     }
 
+    nextDocumentation = ()=>{
+        if (this.state.identificationList.length > 0) {
+            this.progressBar(50);
+        }
+    }
     render(){
-        const { clientSelected, client, itentificationTypes, cities, civilStatus, entities, colonies, municipies, documentAdressProofList, documentAdressProofClient, coOwners, isEdit, updateUpdateClient, nationalities, beneficiaries, economicActivity, clientTypes} = this.props
         const { selectedFiles ,showModal} = this.state;
-        const disableDivs = { 'display': 'none' };
+        let {aHeadImgIden,backImgIden, imageSrc} = this.state;
+        let $imageSrc=null;
+        let $aHeadImgIden = null;
+        let $backImgIden = null;
+        if (imageSrc) {$imageSrc = (<img src={imageSrc} className="w-100 h-100" />);} else {$imageSrc = (<div className="previewText">Please select an Image for Preview</div>);}
+        if (aHeadImgIden) {$aHeadImgIden = (<img src={aHeadImgIden} className="w-100 h-100" />);} else {$aHeadImgIden = (<div className="previewText">Please select an Image for Preview</div>);}
+        if (backImgIden) {$backImgIden = (<img src={backImgIden} className="w-100 h-100" />);} else {$backImgIden = (<div className="previewText">Please select an Image for Preview</div>);}
 
         return(
             <div>
                 <div className="nav nav-tabs row">
-                    <div className="nav-item col-3 text-center">
-                        <a className="nav-link select" id="home-tab"  onClick={()=>this.progressBar(25)}  aria-controls="home">Información General</a>
+                    <div className="nav-item col-2 text-center">
+                        <a className="nav-link " onClick={()=>this.progressBar(16)} >Información General</a>
                     </div>
-                    <div className="nav-item col-3 text-center">
-                        <a className="nav-link " id="coowners-tab" onClick={()=>this.progressBar(50)} data-toggle="tab" href="#cliente_4" role="tab" aria-controls="contact">Huella</a>
+                    <div className="nav-item col-2 text-center">
+                        <a className="nav-link "  onClick={()=>this.progressBar(33)}>identificacion</a>
                     </div>
-                    <div className="nav-item col-3 text-center">
-                        <a className="nav-link " id="documents-tab" data-toggle="tab" href="#cliente_3"onClick={()=>this.progressBar(75)}  role="tab" aria-controls="contact" >Comprobantes</a>
+                    <div className="nav-item col-2 text-center">
+                        <a className="nav-link " onClick={()=>this.progressBar(50)}>Comprobantes</a>
                     </div>
-                    <div className="nav-item col-3 text-center">
-                        <a className="nav-link " id="coowners-tab"  onClick={()=>this.progressBar(100)}  aria-controls="contact">Cotitular/Beneficiario</a>
+                    <div className="nav-item col-2 text-center">
+                        <a className="nav-link " onClick={()=>this.progressBar(67)}>Huella</a>
+                    </div>
+                    <div className="nav-item col-2 text-center">
+                        <a className="nav-link "  onClick={()=>this.progressBar(83)}>Cotitular/Beneficiario</a>
+                    </div>
+                    <div className="nav-item col-2 text-center">
+                        <a className="nav-link "  onClick={()=>this.progressBar(100)}>Historial</a>
                     </div>      
                 </div>
-            <ProgressBar variant="success" now={this.state.step} />
+            <ProgressBar variant="success" now={this.state.step}/>
 
-            {this.state.step === 25 ?   
+            {this.state.step === 16 ?   
             <form onSubmit={()=>this.handleSubmit(event)}>
                 <div>
                     <div className=" cliente-info-general" >
@@ -304,8 +378,11 @@ class Upclient extends React.Component{
                             </div> */}
                             <div className="dp-flex px-4">
                                 <div className="photo-cliente col-2">
-                                        <div className="photo w-100"></div>
-                                        <button type="button"className="btns btn-go m-0" >Capturar foto</button>
+                                    <div className="photo photoPerfil w-100">{$imageSrc}</div>
+                                        <div className="d-flex justify-content-center w-100 button-wrapper">
+                                            <button type="button"className="btns btn-go m-0 cursor" >Capturar foto</button>
+                                            <input type="file" id="documentFileInput" onChange={()=>{this.handleSetImagenIdentification(event,"perfil")}}/>
+                                        </div>
                                 </div>
                                 <div className="box-item--form col">
                                     <div className="item-form row py-3">
@@ -323,7 +400,7 @@ class Upclient extends React.Component{
                                         <div className="mui-textfield col-4">
                                                 <input type="text" id="identificationNumber"  value={this.state.identificationNumber}  onChange={()=> this.handleChange(event)} required />        
                                                 <label className="asterisk">Numero</label>
-                                            <i className="material-icons" data-toggle="modal" data-target="#modal-documento--identificacion" onClick={()=>this.handleOpenModalDocumentation()} >attach_file</i>
+                                            <i className="material-icons" data-toggle="modal" data-target="#modal-documento--identificacion"  >attach_file</i>
                                         </div>
                                     </div>
                                     <div className="item-form row py-3">
@@ -590,62 +667,138 @@ class Upclient extends React.Component{
                     </div>
                 </div>
             </div>
-        </form>
+            </form>
             :
             <div></div>
             }
-
-            {this.state.step === 50 ? 
-            <div >
-                <div className="col-12 row px-2 py-4">
-                    <div className="col pl-2">
-                        <span>Registro de Cliente Nuevo</span>
-                    </div>
-                    <div className="d-flex justify-content-between col-4">
-                        <button className="btns btn-go" onClick={()=>this.progressBar(25)} >Atras</button>
-                        <button type="submit" className="btns btn-go" onClick={()=>this.handleSubmit(event)}>Guardar</button>
-                    </div>
-                </div>
-                <div className="dp-flex justify-content-around p-5">
-                    <div className="hand text-center">
-                        <div>
-                            <img src="../../images/hand-left.PNG" alt="hand-left" />
-                            <div className="finger finger-1"></div>
-                            <div className="finger finger-2"></div>
-                            <div className="finger finger-3"></div>
-                            <div className="finger finger-4 "></div>
-                            <div className="finger finger-5"></div>
-                        </div>
-                        {/* <span>Mano izquierda</span> */}
-                    </div>
-                    <div className="container-fingerprint d-flex flex-column">
-                        <div className="box-finger d-flex justify-content-center">
-                            <img src="../../images/huella.PNG"/>
-                            <span className="fingerprint"></span>
-                        </div>
-                        <div className="d-flex justify-content-center pt-3">
-                            <a href="#" className="btns btn-se swal-save">Capturar huella</a>
+            {this.state.step === 33 ?
+            <div className="px-4">
+                <form>
+                  <div className="row">
+                    <div className="cliente-info-general w-100">
+                        <div className="row  px-2 py-4">
+                            <div className="col-8">
+                                <span>Registro de Cliente Nuevo</span>
+                            </div>
+                            <div className="d-flex justify-content-between col-4">
+                                <button className="btns btn-go"  >Atras</button>
+                                <button type="button" className="btns btn-go" onClick={()=>this.nextDocumentation()}>Siguiente</button>
+                            </div>
                         </div>
                     </div>
-                    <div className="hand text-center">
-                        <div>
-                            <img src="../../images/hand-rigth.PNG" alt="hand-left" />
-                            <div className="finger finger-6 "></div>
-                            <div className="finger finger-7"></div>
-                            <div className="finger finger-8"></div>
-                            <div className="finger finger-9"></div>
-                            <div className="finger finger-10"></div>
+                    {(this.state.identificationList.length < 3 || this.state.addIdentification)
+                    ?
+                    <div className="col-12 row pt-4 pl-4">
+                        <div className="col-12">
+                            <div className="item-form row py-3">
+                                <div className="mui-select col-4">
+                                    <select className="select-text" id="identificationType" value={this.state.identificationType} onChange={()=> this.handleChange(event)} required>
+                                    <option value="0" >Pasaporte</option>
+                                        <option value="1">Cedula</option>
+                                        <option value="2">DNI</option>
+                                    </select>
+                                    <label className="select-label">Tipo de identificacion</label>
+                                </div>
+                                <div className="mui-textfield col-4">
+                                        <input type="text" id="identificationNumber"  value={this.state.identificationNumber}  onChange={()=> this.handleChangeNumber(event)} required />        
+                                        <label className="asterisk">Numero</label>
+                                </div>      
+                                <div className="mui-textfield col-4">
+                                    <Input  floatingLabel={true} type="text" id="identificationDate" value={this.state.identificationDate} required onChange={()=> this.handleChangeDate(event)}/>
+                                    <i className="material-icons icon-calendar">today</i>
+                                    <label className="select-label">Vigencia</label>
+                                </div>
+                            </div>
                         </div>
-                        {/* <span>Mano derecha</span> */}
+                        <div className="col-12">
+                            <div className="row">
+                                <div className="col-6 cliente-info-general">
+                                <label className="asterisk">Frente</label>
+                                    <div className="photo-cliente ">
+                                        <div className="photo w-100">{$aHeadImgIden}</div>
+                                        <div className="d-flex justify-content-center w-100 button-wrapper">
+                                            <button type="button"className="btns btn-go m-0" >Capturar foto</button>
+                                            <input type="file" id="documentFileInput" onChange={()=>{this.handleSetImagenIdentification(event,"aHeadImgIden")}}/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-6 cliente-info-general">
+                                <label className="asterisk">Detras</label>
+                                    <div className="photo-cliente">
+                                        <div className="photo w-100 ">{$backImgIden}</div>
+                                        <div className="d-flex justify-content-center w-100 button-wrapper">
+                                            <button type="button"className="btns btn-go m-0" >Capturar foto</button>
+                                            <input type="file" id="documentFileInput" onChange={()=>{this.handleSetImagenIdentification(event,"falbackImgIdense")}}/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            :<div></div>
+                    :
+                    <div></div>
+                    }
+                    <div className="col-12 py-4">
+                        {this.state.identificationList.length > 0
+                        ?
+                        <div className="table-responsive pt-4 mt-2">
+                            <table className="table pt-5">
+                                <thead>
+                                    <tr>
+                                        <th className="text-center bold">Tipo</th>
+                                        <th className="text-center bold">Numero dentificacion</th>
+                                        <th className="text-center bold">Vencimiento</th>
+                                        <th className="text-center bold"></th>
+                                        <th className="text-center bold"></th>
+                                    </tr>
+                                </thead>
+                                    <tbody>
+                                        {this.state.identificationList.length > 0 &&
+                                            this.state.identificationList.map((identi, index) => {
+                                                {
+                                                    return (
+                                                        <tr  className={(index % 2) ? "tr-selected" :""} >
+                                                            <td  className="text-center" onClick={()=>this.handleOpenModalDocumentation(identi)}>{(() => {
+                                                                switch (identi.identificationType) {
+                                                                case "0":   return "Pasaporte";
+                                                                case "1":   return "Cedula";
+                                                                case "2":   return "DNI";
+                                                                default:    return "Pasaporte";
+                                                                }
+                                                            })()}
+                                                            </td>
+                                                            <td  className="text-center" >{identi.identificationNumber}</td>
+                                                            <td  className="text-center" >{identi.identificationDate}</td>
+                                                            <td  className="text-center" >{identi.predeterminado?'Predeterminado':""}</td>
+                                                            <td  className="text-center" >
+                                                                <i  className="material-icons" onClick={()=>this.handleOpenModalDocumentation(identi)}>edit</i>
+                                                                <i  className="material-icons remove pl-4" onClick={()=>this.handleChandeIdentification(false,identi)} >delete</i>
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                }
+                                            })
+                                        }
+                                </tbody>
+                            </table>
+                        </div>
+                    :<div></div>}
+                    </div>
+                    <div className="d-flex justify-content-center col-11">
+                        {this.state.identificationList.length < 3 
+                            ?
+                            <button type="button" className="btns btn-go" onClick={()=>this.handleChandeIdentification(true)}>Guardar</button>
+                            :<div></div>
+                        }
+                    </div>
+                  </div>
+                </form>
+            </div>:
+            <div></div>
             }
-
-            {this.state.step === 75 ? 
+            {this.state.step === 50 ? 
             <div>
-                <div id="cliente_3">
+                <div>
                     <form className="w-100" onSubmit={()=>this.handleSubmit(event)}>
                         <div className="form">
                             <div className="container-form">
@@ -696,10 +849,10 @@ class Upclient extends React.Component{
                                         <div className="photo w-100">-</div>
                                     </div>
                                     <div className="photo-cliente  p-0">
-                                            <div className="photo w-100">-</div>
+                                            <div className="photo w-100"></div>
                                     </div>
                                     <div className="btn-captura">
-                                        <input type="file" onChange={()=>{this.handleSetImagem(event)}}/>
+
                                         <a href="#" className="btns btn-se">Capturar</a>
                                         <span className="popover-info" data-toggle="popover" data-content="Toma 3 fotografías de la papeleta, selecciona la mejor y asegúrate de que sea legible.
                                                 La foto presentada en el recuadro grande es la que se guardará.">
@@ -752,7 +905,54 @@ class Upclient extends React.Component{
                     :
             <div></div>
             }
-            {this.state.step === 100 ?
+            {this.state.step === 67 ? 
+                <div >
+                    <div className="col-12 row px-2 py-4">
+                        <div className="col pl-2">
+                            <span>Registro de Cliente Nuevo</span>
+                        </div>
+                        <div className="d-flex justify-content-between col-4">
+                            <button className="btns btn-go" onClick={()=>this.progressBar(25)} >Atras</button>
+                            <button type="submit" className="btns btn-go" onClick={()=>this.handleSubmit(event)}>Guardar</button>
+                        </div>
+                    </div>
+                    <div className="dp-flex justify-content-around p-5">
+                        <div className="hand text-center">
+                            <div>
+                                <img src="../../images/hand-left.PNG" alt="hand-left" />
+                                <div className="finger finger-1"></div>
+                                <div className="finger finger-2"></div>
+                                <div className="finger finger-3"></div>
+                                <div className="finger finger-4 "></div>
+                                <div className="finger finger-5"></div>
+                            </div>
+                            {/* <span>Mano izquierda</span> */}
+                        </div>
+                        <div className="container-fingerprint d-flex flex-column">
+                            <div className="box-finger d-flex justify-content-center">
+                                <img src="../../images/huella.PNG"/>
+                                <span className="fingerprint"></span>
+                            </div>
+                            <div className="d-flex justify-content-center pt-3">
+                                <a href="#" className="btns btn-se swal-save">Capturar huella</a>
+                            </div>
+                        </div>
+                        <div className="hand text-center">
+                            <div>
+                                <img src="../../images/hand-rigth.PNG" alt="hand-left" />
+                                <div className="finger finger-6 "></div>
+                                <div className="finger finger-7"></div>
+                                <div className="finger finger-8"></div>
+                                <div className="finger finger-9"></div>
+                                <div className="finger finger-10"></div>
+                            </div>
+                            {/* <span>Mano derecha</span> */}
+                        </div>
+                    </div>
+                </div>
+                :<div></div>
+                }
+            {this.state.step === 83 ?
             <div className="row pl-3">
              <div className="col-12 row px-2 py-4">
                 <div className="col pl-2">
@@ -858,6 +1058,129 @@ class Upclient extends React.Component{
     </div>
             : <div></div>
             }
+
+            {this.state.step === 100?
+            <div className="px-4"> 
+                <div className="row">
+                    <div className="cliente-info-general col-12">
+                        <div className="row  px-2 py-4">
+                            <div className="col-8">
+                                <span>Registro de Cliente Nuevo</span>
+                            </div>
+                            <div className="d-flex justify-content-between col-4">
+                                <button className="btns btn-go"  >Atras</button>
+                                <button type="button" className="btns btn-go" >Finalizar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-12">
+                        <div className="row px-2">
+                            <div className="col-12">
+                                <div className="accordion" id="accordionExample">
+                                    <div className="card">
+                                        <div className="card-header" id="headingOne">
+                                        <div className="mb-0 d-flex justify-content-between">
+                                            <div className="pl-2">
+                                                <label>Contratos Vigentes : 1</label>
+                                            </div>
+                                            <div className="pr-2">
+                                                <button className="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"  aria-controls="collapseOne">
+                                                    <i className="material-icons">more_vert</i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        </div>
+
+                                        <div id="collapseOne" className="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                            <div className="card-body">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="card">
+                                        <div className="card-header" id="headingTwo">
+                                            <div className="mb-0 d-flex justify-content-between">
+                                                <div className="pl-2">
+                                                    <label>Contratos Vencidos: 0</label>
+                                                </div>
+                                                <div className="pr-2">
+                                                    <button className="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                        <i className="material-icons">more_vert</i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="collapseTwo" className="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                                        <div className="card-body">
+                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div className="card">
+                                        <div className="card-header" id="headingThree">
+                                            <div className="mb-0 d-flex justify-content-between">
+                                                <div className="pl-2">
+                                                    <label>Lo que mas empeña : Herramientas</label>
+                                                </div>
+                                                <div className="pr-2">
+                                                    <button className="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                        <i className="material-icons">more_vert</i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="collapseThree" className="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                                            <div className="card-body">
+                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="card">
+                                        <div className="card-header" id="headingFour">
+                                            <div className="mb-0 d-flex justify-content-between">
+                                                <div className="pl-2">
+                                                    <label>Lo que mas suele perder</label>
+                                                </div>
+                                                <div className="pr-2">
+                                                    <button className="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                                        <i className="material-icons">more_vert</i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="collapseFour" className="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+                                            <div className="card-body">
+                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="card">
+                                        <div className="card-header" id="headingFour">
+                                            <div className="mb-0 d-flex justify-content-between">
+                                                <div className="pl-2">
+                                                    <label>Clasificacio del cliente</label>
+                                                </div>
+                                                <div className="pr-2">
+                                                    <button className="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                                        <i className="material-icons">more_vert</i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="collapseFive" className="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+                                            <div className="card-body">
+                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            :<div></div>
+            }
             <Modal
               show={showModal}
               size="lg"
@@ -874,22 +1197,28 @@ class Upclient extends React.Component{
                   <div className="row">
                           <div className="col-12">
                             <div className="item-form row py-3">
-                                <div className="mui-select col-4">
+                                <div className="mui-select col-3">
                                     <select className="select-text" id="identificationType" value={this.state.identificationType} onChange={()=> this.handleChange(event)} required>
-                                        <option value="Pasaporte" >Pasaporte</option>
-                                        <option value="Cedula">Cedula</option>
-                                        <option value="DNI">DNI</option>
+                                        <option value="0" >Pasaporte</option>
+                                        <option value="1">Cedula</option>
+                                        <option value="2">DNI</option>
                                     </select>
-                                    <label className="asterisk">Tipo de identificacion</label>
+                                    <label className="select-label">Tipo de identificacion</label>
                                 </div>
-                                <div className="mui-textfield col-4">
+                                <div className="mui-textfield col-3">
                                         <input type="text" id="identificationNumber"  value={this.state.identificationNumber}  onChange={()=> this.handleChangeNumber(event)} required />        
                                         <label className="asterisk">Numero</label>
                                 </div>      
-                                <div className="mui-textfield col-4">
+                                <div className="mui-textfield col-3">
                                     <Input  floatingLabel={true} type="text" id="registerDate" value={this.state.identificationDate} required onChange={()=> this.handleChangeDate(event)}/>
                                     <i className="material-icons icon-calendar">today</i>
-                                    <label className="asterisk">Vigencia</label>
+                                    <label className="select-label">Vigencia</label>
+                                </div>
+                                <div className="col-3">
+                                    <div className="d-flex justify-content-center pt-2">
+                                        <input type="checkbox" className="form-check-input pt-2" id="identificationPredeterminada" defaultChecked={this.state.identificationPredeterminada?true:false} onChange={()=> this.handleChangeCheckBox(event)}/>
+                                    </div>
+                                    <label className="select-label">Predeterminado</label>
                                 </div>
                             </div>
                           </div>
@@ -900,7 +1229,7 @@ class Upclient extends React.Component{
                                         <div className="photo-cliente ">
                                             <div className="photo w-100"></div>
                                             <div className="d-flex justify-content-center w-100">
-                                                <button type="button"className="btns btn-go m-0" >Capturar foto</button>
+                                                <button type="button"className="btns btn-go m-0" >Cambiar</button>
                                             </div>
                                         </div>
                                     </div>
@@ -909,83 +1238,69 @@ class Upclient extends React.Component{
                                         <div className="photo-cliente">
                                             <div className="photo w-100 "></div>
                                             <div className="d-flex justify-content-center w-100">
-                                                <button type="button"className="btns btn-go m-0" >Capturar foto</button>
+                                                <button type="button"className="btns btn-go m-0" >Cambiar</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                           </div>
-                          <div className="col-12 py-4">
-                            <div className="table-responsive pt-4 mt-2">
-                                <table className="table pt-5">
-                                    <thead>
-                                        <tr>
-                                            <th className="bold">Nombres y apellidos</th>
-                                            <th className="text-center bold">Tipo</th>
-                                            <th className="text-center bold">Nacionalidad</th>
-                                            <th className="text-center bold">Teléfono</th>
-                                            <th className="text-center bold"></th>
-                                        </tr>
-                                    </thead>
-                                        <tbody>
-                                            {this.state.coownersList.length > 0 &&
-                                                this.state.coownersList.map((coOwner, index) => {
-                                                    {
-                                                        return (
-                                                            <tr  className={(index % 2) ? "tr-selected" :""} >
-                                                                <td  className="semibold">{coOwner.Nombres +" "+ coOwner.ApellidoPaterno +" "+ coOwner.ApellidoMaterno}</td>
-                                                                <td  className="text-center">Cotitular</td>
-                                                                <td  className="text-center">{coOwner.Nacionalidad}</td>
-                                                                <td  className="text-center">{coOwner.TelefonoMovil}</td>
-                                                                <td  className="text-center">
-                                                                    {/*<i key={uuidv1()} className="material-icons">edit</i>*/}
-                                                                    <i  className="material-icons remove">delete</i>
-                                                                </td>
-                                                            </tr>
-                                                        )
-                                                    }
-                                                })
-                                            }
-                                            {
-                                                this.state.beneficiariesList.length > 0 &&
-                                                this.state.beneficiariesList.map((beneficiary, index) => {
-                                                    {
-                                                        return (
-                                                            <tr className={(index % 2) ? "tr-selected" : ""} >
-                                                                <td  className="semibold">{beneficiary.Nombres + " " + beneficiary.ApellidoPaterno + " " + beneficiary.ApellidoMaterno}</td>
-                                                                <td  className="text-center">Beneficiario</td>
-                                                                <td  className="text-center">{beneficiary.Nacionalidad}</td>
-                                                                <td  className="text-center">{beneficiary.TelefonoMovil}</td>
-                                                                <td  className="text-center">
-                                                                    {/*<i key={uuidv1()} className="material-icons">edit</i>*/}
-                                                                    <i  className="material-icons remove">delete</i>
-                                                                </td>
-                                                            </tr>
-                                                        )
-                                                    }
-                                                })
-                                            }
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
                   </div>
                 </form>
                   :
                    <div className="row pb-2">
-                    <div className="col-12 d-flex justify-content-center">
+                       {this.state.step === 33?
+                       <div className="col-12">
+                        <div className="col-12 d-flex justify-content-center">
                             <img src="../../images/correcto.PNG" />
-                    </div>
-                    <div className="col-12 text-center py-2 w-50">
-                        <h3>
-                            ¡{this.modalText}<br></br>fue guardada con exito!
-                        </h3>
-                    </div>
+                        </div>
+                        <div className="col-12 text-center py-2 w-100">
+                            <h3>
+                                ¡Se a agregado una<br></br>indetificacion con exito!
+                            </h3>
+                            <p>¿Desea Agregar otra?</p>
+                        </div>
+                       </div>
+                       :
+                       <div>
+                            <div className="col-12 d-flex justify-content-center">
+                                    <img src="../../images/correcto.PNG" />
+                            </div>
+                            <div className="col-12 text-center py-2 w-50">
+                                <h3>
+                                    ¡{this.modalText}<br></br>fue guardada con exito!
+                                </h3>
+                            </div>
+                       </div>
+                        }
+
                   </div> 
                   }
               </Modal.Body>
               <Modal.Footer className="pt-2">
-                <button onClick={()=>this.setState({...this.state,showModal:false,modalDocumentation:false})} className="btns btn-go m-0" >Siguiente</button> 
+                  {this.state.modalDocumentation?
+                  <div className="d-flex justify-content-center w-100 pt-5 " >
+                      <div className="flex-column">
+                          <div className="py-3">
+                            <button onClick={()=>this.handleModificationIdentification()} className="btns btn-go pb-2" >Guardar</button> 
+                          </div>
+                        <a onClick={()=>this.setState({...this.state,showModal:false,modalDocumentation:false})} className="btns btn-go " >Cancelar</a> 
+                      </div>
+                  </div>
+                    :<button onClick={()=>this.setState({...this.state,showModal:false,modalDocumentation:false})} className="btns btn-go m-0" >Siguiente</button>
+                }
+                {/* {
+                    this.state.step === 33 && !this.state.modalDocumentation?
+                        <div className="d-flex justify-content-around w-100 pt-5 ">
+                            <div>
+                                <button onClick={()=>this.setState({...this.state,showModal:false,modalDocumentation:false})} className="btns btn-go m-0" >Si</button>
+                            </div>
+                            <div>
+                                <button onClick={()=>this.progressBar(50)} className="btns btn-go m-0" >No</button>
+                            </div>
+                        </div>
+                    :<div></div>
+                } */}
+               
               </Modal.Footer>
             </Modal>
 

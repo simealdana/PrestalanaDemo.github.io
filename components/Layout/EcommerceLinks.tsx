@@ -19,7 +19,7 @@ class EcommerceLinks extends React.Component {
             return (
                 <Redirect
                     to={{
-                        pathname: "/newClient"
+                        pathname: "/"
                     }}
                 />
             );
@@ -37,12 +37,10 @@ class EcommerceLinks extends React.Component {
     render() {
         return (
             <div className="tab-page--menu col-10">
-                <a className="menu-header"><i className="material-icons icon-menu">menu</i></a>
-                <img className="img-logo" src={logoMultiapoyo} />
+                <img onClick={() => this.setRedirect()} className="img-logo" src={logoMultiapoyo} />
                 <div id="ecommerce" className="item-page--menu item-active">
                     Ecommerce
                 </div>
-                <a onClick={() => this.setRedirect()} className="ecommerce-new-customer">Cliente nuevo</a>
                 {this.renderRedirect()}
             </div>
         );
@@ -59,8 +57,6 @@ function mapDispatchToProps(dispatch) {
         }
     }
 }
-
-
 
 export default connect(
     null,
